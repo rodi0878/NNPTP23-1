@@ -1,18 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Design;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Drawing.Text;
-using System.Drawing.Drawing2D;
-using System.Linq.Expressions;
-using System.Threading;
 using NNPTPZ1.Mathematics;
 
 namespace NNPTPZ1
@@ -54,7 +42,6 @@ namespace NNPTPZ1
             p.Coe.Add(Cplx.Zero);
             //p.Coe.Add(Cplx.Zero);
             p.Coe.Add(new Cplx() { Re = 1 });
-            Poly ptmp = p;
             Poly pd = p.Derive();
 
             Console.WriteLine(p);
@@ -64,8 +51,6 @@ namespace NNPTPZ1
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
-
-            var maxid = 0;
 
             // TODO: cleanup!!!
             // for every pixel in image...
@@ -122,7 +107,6 @@ namespace NNPTPZ1
                     {
                         koreny.Add(ox);
                         id = koreny.Count;
-                        maxid = id + 1; 
                     }
 
                     // colorize pixel according to root number
