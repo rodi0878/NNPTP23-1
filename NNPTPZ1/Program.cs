@@ -13,11 +13,9 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
-            {
-                intargs[i] = int.Parse(args[i]);
-            }
+            int screenWidth = int.Parse(args[0]);
+            int screenHeight = int.Parse(args[1]);
+
             double[] doubleargs = new double[4];
             for (int i = 0; i < doubleargs.Length; i++)
             {
@@ -25,16 +23,16 @@ namespace NNPTPZ1
             }
             string outputFileName = args[6];
             // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
+            Bitmap bmp = new Bitmap(screenWidth, screenHeight);
             double xmin = doubleargs[0];
             double xmax = doubleargs[1];
             double ymin = doubleargs[2];
             double ymax = doubleargs[3];
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
+            double xstep = (xmax - xmin) / screenWidth;
+            double ystep = (ymax - ymin) / screenHeight;
 
-            List<Cplx> koreny = new List<Cplx>();
+            List<Cplx> roots = new List<Cplx>();
             // TODO: poly should be parameterised?
             Poly p = new Poly();
             p.Coe.Add(new Cplx() { Re = 1 });
@@ -52,13 +50,11 @@ namespace NNPTPZ1
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            var maxid = 0;
-
             // TODO: cleanup!!!
             // for every pixel in image...
-            for (int i = 0; i < intargs[1]; i++)
+            for (int i = 0; i < screenHeight; i++)
             {
-                for (int j = 0; j < intargs[0]; j++)
+                for (int j = 0; j < screenWidth; j++)
                 {
                     // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
@@ -71,20 +67,22 @@ namespace NNPTPZ1
                     };
 
                     if (ox.Re == 0)
+                    {
                         ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    }
 
-                    //Console.WriteLine(ox);
+                    if (ox.Imaginari == 0)
+                    {
+                        ox.Imaginari = 0.0001f;
+                    }
 
                     // find solution of equation using newton's iteration
                     float it = 0;
-                    for (int q = 0; q< 30; q++)
+                    for (int q = 0; q < 30; q++)
                     {
                         var diff = p.Eval(ox).Divide(pd.Eval(ox));
                         ox = ox.Subtract(diff);
-
-                        //Console.WriteLine($"{q} {ox} -({diff})");
+                        
                         if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
                         {
                             q--;
@@ -92,14 +90,12 @@ namespace NNPTPZ1
                         it++;
                     }
 
-                    //Console.ReadKey();
-
                     // find solution root number
                     var known = false;
                     var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
+                    for (int w = 0; w <roots.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.Re- roots[w].Re, 2) + Math.Pow(ox.Imaginari - roots[w].Imaginari, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -107,9 +103,8 @@ namespace NNPTPZ1
                     }
                     if (!known)
                     {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1; 
+                        roots.Add(ox);
+                        id = roots.Count;
                     }
 
                     // colorize pixel according to root number
@@ -124,7 +119,7 @@ namespace NNPTPZ1
                 }
             }
 
-         bmp.Save(outputFileName ?? "../../../out.png");
+            bmp.Save(outputFileName ?? "../../../out.png");
         }
     }
 
@@ -135,7 +130,7 @@ namespace NNPTPZ1
             /// <summary>
             /// Coe
             /// </summary>
-            public List<Cplx> Coe { get; set; }
+            public List<Cplx> Coe { get; }
 
             /// <summary>
             /// Constructor
