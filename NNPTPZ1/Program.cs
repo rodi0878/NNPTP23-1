@@ -45,7 +45,7 @@ namespace NNPTPZ1
             Console.WriteLine(p);
             Console.WriteLine(pd);
 
-            var clrs = new Color[]
+            var colorPalette = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
@@ -110,7 +110,7 @@ namespace NNPTPZ1
                     // colorize pixel according to root number
                     //int vv = id;
                     //int vv = id * 50 + (int)it*5;
-                    var vv = clrs[id % clrs.Length];
+                    var vv = colorPalette[id % colorPalette.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
                     vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
                     //vv = Math.Min(Math.Max(0, vv), 255);
