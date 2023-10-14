@@ -26,19 +26,17 @@ namespace NNPTPZ1
 
         private static Bitmap bmp;
         private static List<ComplexNumber> roots = new List<ComplexNumber>();
+        private static Color[] colorPalette = {
+            Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan,
+            Color.Magenta
+        };
         
         static void Main(string[] args)
         {
             InitializeScreenSize(args);
             InitializeCoordinates(LoadInputValues(args));
 
-            Polygon polygon = CreateDefaultPolygonForCalculation();
-            Polygon polygonDerived = polygon.Derive();
-
-            Console.WriteLine(polygon);
-            Console.WriteLine(polygonDerived);
-
-            ComputeNewtonFractal(polygon, polygonDerived, roots);
+            ComputeNewtonFractal();
 
             bmp.Save(outputFileName ?? "../../../out.png");
         }
@@ -46,10 +44,10 @@ namespace NNPTPZ1
         private static Polygon CreateDefaultPolygonForCalculation()
         {
             Polygon polygon = new Polygon();
-            polygon.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polygon.Coefficients.Add(new ComplexNumber { RealPart = 1 });
             polygon.Coefficients.Add(ComplexNumber.Zero);
             polygon.Coefficients.Add(ComplexNumber.Zero);
-            polygon.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polygon.Coefficients.Add(new ComplexNumber { RealPart = 1 });
             return polygon;
         }
 
@@ -83,49 +81,62 @@ namespace NNPTPZ1
             bmp = new Bitmap(screenWidth, screenHeight);
         }
 
-        private static void ComputeNewtonFractal(Polygon p, Polygon pd, List<ComplexNumber> roots)
+        private static void ComputeNewtonFractal()
         {
-            Color[] colorPalette = GetColorPalette();
+            Polygon polygon = CreateDefaultPolygonForCalculation();
+            Polygon polygonDerived = polygon.Derive();
+
+            Console.WriteLine(polygon);
+            Console.WriteLine(polygonDerived);
             
             // for every pixel in image...
             for (int x = 0; x < screenWidth; x++)
             {
                 for (int y = 0; y < screenHeight; y++)
                 {
-                    CalculatePixelColor(p, pd, roots, x, y, colorPalette);
+                    CalculatePixelColor(polygon, polygonDerived, x, y);
                 }
             }
         }
 
-        private static void CalculatePixelColor(Polygon polygon, Polygon polygonDerived, List<ComplexNumber> roots, int i, int j, Color[] colorPalette)
+        private static void CalculatePixelColor(Polygon polygon, Polygon polygonDerived, int x, int y)
         {
-            ComplexNumber complexNumber = CreateComplexNumberByCoordinates(i, j);
+            ComplexNumber complexNumber = CreateComplexNumberByCoordinates(x, y);
 
             // find solution of equation using newton's iteration
             int iteration = 0;
-            for (int q = 0; q < 30; q++)
+            for (int i = 0; i < 30; i++)
             {
                 var diff = polygon.Eval(complexNumber).Divide(polygonDerived.Eval(complexNumber));
                 complexNumber = complexNumber.Subtract(diff);
 
                 if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
-                {
-                    q--;
-                }
+                    i--;
 
                 iteration++;
             }
 
-            // find solution root number
-            var known = false;
-            var id = 0;
-            for (int w = 0; w < roots.Count; w++)
+            int id = FindSulutionRootNumber(complexNumber);
+
+            ColorizePixel(id, iteration, x, y);
+        }
+
+        /// <summary>
+        /// Find solution root number
+        /// </summary>
+        /// <param name="complexNumber"></param>
+        /// <returns></returns>
+        private static int FindSulutionRootNumber(ComplexNumber complexNumber)
+        {
+            bool known = false;
+            int id = 0;
+            for (int i = 0; i < roots.Count; i++)
             {
-                if (Math.Pow(complexNumber.RealPart - roots[w].RealPart, 2) + Math.Pow(complexNumber.ImaginaryPart - roots[w].ImaginaryPart, 2) <=
-                    0.01)
+                if (Math.Pow(complexNumber.RealPart - roots[i].RealPart, 2)
+                    + Math.Pow(complexNumber.ImaginaryPart - roots[i].ImaginaryPart, 2) <= 0.01)
                 {
                     known = true;
-                    id = w;
+                    id = i;
                 }
             }
 
@@ -135,7 +146,7 @@ namespace NNPTPZ1
                 id = roots.Count;
             }
 
-            ColorizePixel(colorPalette, id, iteration, j, i);
+            return id;
         }
 
         private static ComplexNumber CreateComplexNumberByCoordinates(int x, int y)
@@ -144,7 +155,7 @@ namespace NNPTPZ1
             double coordinateX = xmin + y * xstep;
             double coordinateY = ymin + x * ystep;
 
-            ComplexNumber complexNumber = new ComplexNumber()
+            ComplexNumber complexNumber = new ComplexNumber
             {
                 RealPart = coordinateX,
                 ImaginaryPart = coordinateY
@@ -162,12 +173,11 @@ namespace NNPTPZ1
         /// <summary>
         /// Colorize pixel according to root number
         /// </summary>
-        /// <param name="colorPalette"></param>
         /// <param name="id"></param>
         /// <param name="iteration"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private static void ColorizePixel(Color[] colorPalette, int id, int iteration, int x, int y)
+        private static void ColorizePixel(int id, int iteration, int x, int y)
         {
             Color selectedColor = colorPalette[id % colorPalette.Length];
             Color adjustedSelectedColor = Color.FromArgb(
@@ -176,15 +186,6 @@ namespace NNPTPZ1
                 Math.Min(Math.Max(0, selectedColor.B - iteration * 2), 255));
             
             bmp.SetPixel(x, y, adjustedSelectedColor);
-        }
-
-        private static Color[] GetColorPalette()
-        {
-            return new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan,
-                Color.Magenta
-            };
         }
     }
 }
