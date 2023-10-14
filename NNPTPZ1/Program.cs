@@ -35,20 +35,25 @@ namespace NNPTPZ1
             List<ComplexNumber> roots = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
             Polygon p = new Polygon();
-            p.Coefficients.Add(new ComplexNumber() { Re = 1 });
+            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
             p.Coefficients.Add(ComplexNumber.Zero);
             p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(new ComplexNumber() { Re = 1 });
+            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
             Polygon pd = p.Derive();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
 
-            var colorPalette = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
+            var colorPalette = GetColorPalette();
 
+            ComputeNewtonFractal(screenHeight, screenWidth, ymin, ystep, xmin, xstep, p, pd, roots, colorPalette, bmp);
+
+            bmp.Save(outputFileName ?? "../../../out.png");
+        }
+
+        private static void ComputeNewtonFractal(int screenHeight, int screenWidth, double ymin, double ystep, double xmin,
+            double xstep, Polygon p, Polygon pd, List<ComplexNumber> roots, Color[] colorPalette, Bitmap bmp)
+        {
             // for every pixel in image...
             for (int i = 0; i < screenHeight; i++)
             {
@@ -60,19 +65,15 @@ namespace NNPTPZ1
 
                     ComplexNumber ox = new ComplexNumber()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        RealPart = x,
+                        ImaginaryPart = (float)(y)
                     };
 
-                    if (ox.Re == 0)
-                    {
-                        ox.Re = 0.0001;
-                    }
+                    if (ox.RealPart == 0)
+                        ox.RealPart = 0.0001;
 
-                    if (ox.Imaginari == 0)
-                    {
-                        ox.Imaginari = 0.0001f;
-                    }
+                    if (ox.ImaginaryPart == 0)
+                        ox.ImaginaryPart = 0.0001f;
 
                     // find solution of equation using newton's iteration
                     float it = 0;
@@ -80,25 +81,27 @@ namespace NNPTPZ1
                     {
                         var diff = p.Eval(ox).Divide(pd.Eval(ox));
                         ox = ox.Subtract(diff);
-                        
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+
+                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
                         {
                             q--;
                         }
+
                         it++;
                     }
 
                     // find solution root number
                     var known = false;
                     var id = 0;
-                    for (int w = 0; w <roots.Count;w++)
+                    for (int w = 0; w < roots.Count; w++)
                     {
-                        if (Math.Pow(ox.Re- roots[w].Re, 2) + Math.Pow(ox.Imaginari - roots[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.RealPart - roots[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - roots[w].ImaginaryPart, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
                         }
                     }
+
                     if (!known)
                     {
                         roots.Add(ox);
@@ -108,12 +111,20 @@ namespace NNPTPZ1
                     // colorize pixel according to root number
                     var vv = colorPalette[id % colorPalette.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
+                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - (int)it * 2), 255),
+                        Math.Min(Math.Max(0, vv.G - (int)it * 2), 255), Math.Min(Math.Max(0, vv.B - (int)it * 2), 255));
                     bmp.SetPixel(j, i, vv);
                 }
             }
+        }
 
-            bmp.Save(outputFileName ?? "../../../out.png");
+        private static Color[] GetColorPalette()
+        {
+            return new Color[]
+            {
+                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan,
+                Color.Magenta
+            };
         }
     }
 }

@@ -26,7 +26,7 @@ namespace NNPTPZ1.Mathematics
             Polygon p = new Polygon();
             for (int q = 1; q < Coefficients.Count; q++)
             {
-                p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { Re = q }));
+                p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { RealPart = q }));
             }
 
             return p;
@@ -39,7 +39,7 @@ namespace NNPTPZ1.Mathematics
         /// <returns>y</returns>
         public ComplexNumber Eval(double x)
         {
-            var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
+            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
             return y;
         }
 
