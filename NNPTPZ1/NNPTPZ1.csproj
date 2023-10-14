@@ -46,6 +46,11 @@
   <ItemGroup>
     <Compile Include="Mathematics\ComplexNumber.cs" />
     <Compile Include="Mathematics\Polygon.cs" />
+    <Compile Include="NewtonFractal\Coordinates\BoundaryCoordinates.cs" />
+    <Compile Include="NewtonFractal\Coordinates\Coordinate.cs" />
+    <Compile Include="NewtonFractal\NewtonFractal.cs" />
+    <Compile Include="NewtonFractal\Screen\ScreenSize.cs" />
+    <Compile Include="NewtonFractal\Settings\NewtonFractalSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
