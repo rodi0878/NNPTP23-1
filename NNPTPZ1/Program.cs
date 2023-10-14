@@ -38,7 +38,6 @@ namespace NNPTPZ1
             p.Coe.Add(new Cplx() { Re = 1 });
             p.Coe.Add(Cplx.Zero);
             p.Coe.Add(Cplx.Zero);
-            //p.Coe.Add(Cplx.Zero);
             p.Coe.Add(new Cplx() { Re = 1 });
             Poly pd = p.Derive();
 
@@ -50,7 +49,6 @@ namespace NNPTPZ1
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            // TODO: cleanup!!!
             // for every pixel in image...
             for (int i = 0; i < screenHeight; i++)
             {
@@ -108,14 +106,10 @@ namespace NNPTPZ1
                     }
 
                     // colorize pixel according to root number
-                    //int vv = id;
-                    //int vv = id * 50 + (int)it*5;
                     var vv = colorPalette[id % colorPalette.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
                     vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
-                    //vv = Math.Min(Math.Max(0, vv), 255);
                     bmp.SetPixel(j, i, vv);
-                    //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
 
@@ -244,7 +238,6 @@ namespace NNPTPZ1
             public Cplx Multiply(Cplx b)
             {
                 Cplx a = this;
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
                 return new Cplx()
                 {
                     Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
@@ -286,9 +279,6 @@ namespace NNPTPZ1
 
             internal Cplx Divide(Cplx b)
             {
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
                 var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
                 var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
 
