@@ -10,89 +10,79 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Drawing.Text;
-using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Threading;
 using NNPTPZ1.Mathematics;
+using System.Xml.Serialization;
 
 namespace NNPTPZ1
 {
-    /// <summary>
-    /// This program should produce Newton fractals.
-    /// See more at: https://en.wikipedia.org/wiki/Newton_fractal
-    /// </summary>
     class Program
     {
+        private static string fileName;
+        private static int width, height;
+        private static double xmin, xmax, ymin, ymax, xstep, ystep;
+        private static Bitmap bitmap;
+        static List<ComplexNumber> roots;
+
         static void Main(string[] args)
         {
-            if(args.Length != 7)
-            {
-                Console.WriteLine("Requested 7 arguments");
-                return;
-            }
-            
-            int width = int.Parse(args[0]);
-            int height = int.Parse(args[1]);
-            double xmin = double.Parse(args[2]);
-            double xmax = double.Parse(args[3]);
-            double ymin = double.Parse(args[4]);
-            double ymax = double.Parse(args[5]);
-            string fileName = args[6];
+            InitializeValues(args);
+            xstep = (xmax - xmin) / width;
+            ystep = (ymax - ymin) / height;
 
-            double xstep = (xmax - xmin) / width;
-            double ystep = (ymax - ymin) / height;
 
-            List<ComplexNumber> roots = new List<ComplexNumber>();
-            Polynomial polynomial = new Polynomial();
-            polynomial.Coefficients.Add(new ComplexNumber(1,0));
-            polynomial.Coefficients.Add(ComplexNumber.Zero);
-            polynomial.Coefficients.Add(ComplexNumber.Zero);
-            polynomial.Coefficients.Add(new ComplexNumber(1,0));
-            Polynomial polynomialDerivative = polynomial.Derive();
+            roots = new List<ComplexNumber>();
+            Polynome polynome = new Polynome();
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            Polynome polynomeDerived = polynome.Derive();
 
-            Console.WriteLine(polynomial);
-            Console.WriteLine(polynomialDerivative);
-
-            Bitmap fractalImage = new Bitmap(width, height);
-
-            var colors = new Color[]
+            Color[] colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
-
+            bitmap = new Bitmap(width, height);
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
+                    // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    ComplexNumber ox = new ComplexNumber(x, (float)y);
-
-                    if (ox.Real == 0)
-                        ox.Real = 0.0001;
-                    if (ox.Imaginary == 0)
-                        ox.Imaginary = 0.0001f;
-
-                    float it = 0;
-                    for (int k = 0; k< 30; k++)
+                    ComplexNumber ox = new ComplexNumber()
                     {
-                        var diff = polynomial.Eval(ox).Divide(polynomialDerivative.Eval(ox));
+                        RealPart = x,
+                        ImaginaryPart = (float)(y)
+                    };
+
+                    if (ox.RealPart == 0)
+                        ox.RealPart = 0.0001;
+                    if (ox.ImaginaryPart == 0)
+                        ox.ImaginaryPart = 0.0001f;
+                    // find solution of equation using newton's iteration
+                    float it = 0;
+                    for (int q = 0; q < 30; q++)
+                    {
+                        var diff = polynome.Evaluate(ox).Divide(polynomeDerived.Evaluate(ox));
                         ox = ox.Subtract(diff);
 
-                        if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
+                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
                         {
-                            k--;
+                            q--;
                         }
                         it++;
                     }
 
+                    // find solution root number
                     var known = false;
                     var id = 0;
-
-                    for (int w = 0; w <roots.Count;w++)
+                    for (int w = 0; w < roots.Count; w++)
                     {
-                        if (Math.Pow(ox.Real- roots[w].Real, 2) + Math.Pow(ox.Imaginary - roots[w].Imaginary, 2) <= 0.01)
+                        if (Math.Pow(ox.RealPart - roots[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - roots[w].ImaginaryPart, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -104,15 +94,26 @@ namespace NNPTPZ1
                         id = roots.Count;
                     }
 
-                    var colorIndex = id % colors.Length;
-                    var color = colors[colorIndex];
-                    var alpha = Math.Min(Math.Max(0, (int)it * 5), 255);
-                    var finalColor = Color.FromArgb(alpha, color);
-                    Console.WriteLine(j + " " + i + " " + color.Name);
-                    fractalImage.SetPixel(i, j, finalColor);
+                    // colorize pixel according to root number
+                    var vv = colors[id % colors.Length];
+                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
+                    bitmap.SetPixel(j, i, vv);
                 }
             }
-                    fractalImage.Save(fileName ?? "../../../out.png");
+            bitmap.Save(fileName ?? "../../../out.png");
+
+        }
+
+        private static void InitializeValues(string[] args)
+        {
+            width = int.Parse(args[0]);
+            height = int.Parse(args[1]);
+            xmin = double.Parse(args[2]);
+            xmax = double.Parse(args[3]);
+            ymin = double.Parse(args[4]);
+            ymax = double.Parse(args[5]);
+            fileName = args[6];
         }
     }
+
 }
