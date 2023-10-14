@@ -34,19 +34,19 @@ namespace NNPTPZ1
 
             List<ComplexNumber> roots = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
-            Polygon p = new Polygon();
-            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            Polygon pd = p.Derive();
+            Polygon polygon = new Polygon();
+            polygon.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polygon.Coefficients.Add(ComplexNumber.Zero);
+            polygon.Coefficients.Add(ComplexNumber.Zero);
+            polygon.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            Polygon polygonDerived = polygon.Derive();
 
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            Console.WriteLine(polygon);
+            Console.WriteLine(polygonDerived);
 
             var colorPalette = GetColorPalette();
 
-            ComputeNewtonFractal(screenHeight, screenWidth, ymin, ystep, xmin, xstep, p, pd, roots, colorPalette, bmp);
+            ComputeNewtonFractal(screenHeight, screenWidth, ymin, ystep, xmin, xstep, polygon, polygonDerived, roots, colorPalette, bmp);
 
             bmp.Save(outputFileName ?? "../../../out.png");
         }
@@ -55,9 +55,9 @@ namespace NNPTPZ1
             double xstep, Polygon p, Polygon pd, List<ComplexNumber> roots, Color[] colorPalette, Bitmap bmp)
         {
             // for every pixel in image...
-            for (int i = 0; i < screenHeight; i++)
+            for (int i = 0; i < screenWidth; i++)
             {
-                for (int j = 0; j < screenWidth; j++)
+                for (int j = 0; j < screenHeight; j++)
                 {
                     // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
@@ -66,17 +66,17 @@ namespace NNPTPZ1
                     ComplexNumber ox = new ComplexNumber()
                     {
                         RealPart = x,
-                        ImaginaryPart = (float)(y)
+                        ImaginaryPart = y
                     };
 
                     if (ox.RealPart == 0)
                         ox.RealPart = 0.0001;
 
                     if (ox.ImaginaryPart == 0)
-                        ox.ImaginaryPart = 0.0001f;
+                        ox.ImaginaryPart = 0.0001;
 
                     // find solution of equation using newton's iteration
-                    float it = 0;
+                    int iteration = 0;
                     for (int q = 0; q < 30; q++)
                     {
                         var diff = p.Eval(ox).Divide(pd.Eval(ox));
@@ -87,7 +87,7 @@ namespace NNPTPZ1
                             q--;
                         }
 
-                        it++;
+                        iteration++;
                     }
 
                     // find solution root number
@@ -111,8 +111,8 @@ namespace NNPTPZ1
                     // colorize pixel according to root number
                     var vv = colorPalette[id % colorPalette.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - (int)it * 2), 255),
-                        Math.Min(Math.Max(0, vv.G - (int)it * 2), 255), Math.Min(Math.Max(0, vv.B - (int)it * 2), 255));
+                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - iteration * 2), 255),
+                        Math.Min(Math.Max(0, vv.G - iteration * 2), 255), Math.Min(Math.Max(0, vv.B - iteration * 2), 255));
                     bmp.SetPixel(j, i, vv);
                 }
             }

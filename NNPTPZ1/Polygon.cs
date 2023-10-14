@@ -7,7 +7,7 @@ namespace NNPTPZ1.Mathematics
         /// <summary>
         /// Coefficients
         /// </summary>
-        public List<ComplexNumber> Coefficients { get; }
+        public List<ComplexNumber> Coefficients { get; set; }
 
         /// <summary>
         /// Constructor
@@ -23,13 +23,13 @@ namespace NNPTPZ1.Mathematics
         /// <returns>Derivated polynomial</returns>
         public Polygon Derive()
         {
-            Polygon p = new Polygon();
-            for (int q = 1; q < Coefficients.Count; q++)
+            Polygon polygon = new Polygon();
+            for (int i = 1; i < Coefficients.Count; i++)
             {
-                p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { RealPart = q }));
+                polygon.Coefficients.Add(Coefficients[i].Multiply(new ComplexNumber() { RealPart = i }));
             }
 
-            return p;
+            return polygon;
         }
 
         /// <summary>
@@ -39,36 +39,41 @@ namespace NNPTPZ1.Mathematics
         /// <returns>y</returns>
         public ComplexNumber Eval(double x)
         {
-            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
-            return y;
+            return Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
         }
 
         /// <summary>
         /// Evaluates polynomial at given point
         /// </summary>
-        /// <param name="x">point of evaluation</param>
+        /// <param name="evaluationPoint">point of evaluation</param>
         /// <returns>y</returns>
-        public ComplexNumber Eval(ComplexNumber x)
+        public ComplexNumber Eval(ComplexNumber evaluationPoint)
         {
-            ComplexNumber s = ComplexNumber.Zero;
+            ComplexNumber evaluatedComplexNumber = ComplexNumber.Zero;
             for (int i = 0; i < Coefficients.Count; i++)
             {
-                ComplexNumber coef = Coefficients[i];
-                ComplexNumber bx = x;
-                int power = i;
-
-                if (i > 0)
-                {
-                    for (int j = 0; j < power - 1; j++)
-                        bx = bx.Multiply(x);
-
-                    coef = coef.Multiply(bx);
-                }
-
-                s = s.Add(coef);
+                evaluatedComplexNumber = EvaluateAtPoint(evaluationPoint, i, evaluatedComplexNumber);
             }
 
-            return s;
+            return evaluatedComplexNumber;
+        }
+
+        private ComplexNumber EvaluateAtPoint(ComplexNumber evaluationPoint, int iteration, ComplexNumber evaluatedComplexNumber)
+        {
+            ComplexNumber coefficient = Coefficients[iteration];
+            ComplexNumber currentPowerValue = evaluationPoint;
+            int power = iteration;
+
+            if (iteration > 0)
+            {
+                for (int i = 0; i < power - 1; i++)
+                    currentPowerValue = currentPowerValue.Multiply(evaluationPoint);
+
+                coefficient = coefficient.Multiply(currentPowerValue);
+            }
+
+            evaluatedComplexNumber = evaluatedComplexNumber.Add(coefficient);
+            return evaluatedComplexNumber;
         }
 
         /// <summary>
