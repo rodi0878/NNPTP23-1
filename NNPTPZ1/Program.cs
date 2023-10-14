@@ -32,14 +32,14 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / screenWidth;
             double ystep = (ymax - ymin) / screenHeight;
 
-            List<Cplx> roots = new List<Cplx>();
+            List<ComplexNumber> roots = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
-            Poly pd = p.Derive();
+            Polygon p = new Polygon();
+            p.Coefficients.Add(new ComplexNumber() { Re = 1 });
+            p.Coefficients.Add(ComplexNumber.Zero);
+            p.Coefficients.Add(ComplexNumber.Zero);
+            p.Coefficients.Add(new ComplexNumber() { Re = 1 });
+            Polygon pd = p.Derive();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
@@ -58,7 +58,7 @@ namespace NNPTPZ1
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    Cplx ox = new Cplx()
+                    ComplexNumber ox = new ComplexNumber()
                     {
                         Re = x,
                         Imaginari = (float)(y)
@@ -114,180 +114,6 @@ namespace NNPTPZ1
             }
 
             bmp.Save(outputFileName ?? "../../../out.png");
-        }
-    }
-
-    namespace Mathematics
-    {
-        public class Poly
-        {
-            /// <summary>
-            /// Coe
-            /// </summary>
-            public List<Cplx> Coe { get; }
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public Poly() => Coe = new List<Cplx>();
-
-            public void Add(Cplx coe) =>
-                Coe.Add(coe);
-
-            /// <summary>
-            /// Derives this polynomial and creates new one
-            /// </summary>
-            /// <returns>Derivated polynomial</returns>
-            public Poly Derive()
-            {
-                Poly p = new Poly();
-                for (int q = 1; q < Coe.Count; q++)
-                {
-                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
-                }
-
-                return p;
-            }
-
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(double x)
-            {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
-                return y;
-            }
-
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(Cplx x)
-            {
-                Cplx s = Cplx.Zero;
-                for (int i = 0; i < Coe.Count; i++)
-                {
-                    Cplx coef = Coe[i];
-                    Cplx bx = x;
-                    int power = i;
-
-                    if (i > 0)
-                    {
-                        for (int j = 0; j < power - 1; j++)
-                            bx = bx.Multiply(x);
-
-                        coef = coef.Multiply(bx);
-                    }
-
-                    s = s.Add(coef);
-                }
-
-                return s;
-            }
-
-            /// <summary>
-            /// ToString
-            /// </summary>
-            /// <returns>String repr of polynomial</returns>
-            public override string ToString()
-            {
-                string s = "";
-                int i = 0;
-                for (; i < Coe.Count; i++)
-                {
-                    s += Coe[i];
-                    if (i > 0)
-                    {
-                        int j = 0;
-                        for (; j < i; j++)
-                        {
-                            s += "x";
-                        }
-                    }
-                    if (i+1<Coe.Count)
-                    s += " + ";
-                }
-                return s;
-            }
-        }
-
-        public class Cplx
-        {
-            public double Re { get; set; }
-            public float Imaginari { get; set; }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is Cplx)
-                {
-                    Cplx x = obj as Cplx;
-                    return x.Re == Re && x.Imaginari == Imaginari;
-                }
-                return base.Equals(obj);
-            }
-
-            public readonly static Cplx Zero = new Cplx()
-            {
-                Re = 0,
-                Imaginari = 0
-            };
-
-            public Cplx Multiply(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                    Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
-                };
-            }
-            public double GetAbS()
-            {
-                return Math.Sqrt( Re * Re + Imaginari * Imaginari);
-            }
-
-            public Cplx Add(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re + b.Re,
-                    Imaginari = a.Imaginari + b.Imaginari
-                };
-            }
-            public double GetAngleInDegrees()
-            {
-                return Math.Atan(Imaginari / Re);
-            }
-            public Cplx Subtract(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re - b.Re,
-                    Imaginari = a.Imaginari - b.Imaginari
-                };
-            }
-
-            public override string ToString()
-            {
-                return $"({Re} + {Imaginari}i)";
-            }
-
-            internal Cplx Divide(Cplx b)
-            {
-                var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
-                var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
-
-                return new Cplx()
-                {
-                    Re = tmp.Re / tmp2,
-                    Imaginari = (float)(tmp.Imaginari / tmp2)
-                };
-            }
         }
     }
 }
