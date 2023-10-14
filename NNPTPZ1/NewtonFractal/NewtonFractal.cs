@@ -56,10 +56,6 @@ namespace NNPTPZ1.NewtonFractal
             return _bmp;
         }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         private Polygon CreateDefaultPolygonForCalculation()
         {
             Polygon polygon = new Polygon();
@@ -126,11 +122,6 @@ namespace NNPTPZ1.NewtonFractal
             return id;
         }
         
-        /// <summary>
-        /// Creates a default complex number according to the specified coordinates.
-        /// </summary>
-        /// <param name="coordinate"></param>
-        /// <returns></returns>
         private ComplexNumber CreateComplexNumberByCoordinates(Coordinate coordinate)
         {
             // find "world" coordinates of pixel
