@@ -23,55 +23,60 @@ namespace NNPTPZ1
     /// </summary>
     class Program
     {
+        static string fileName;
+        static int[] bitmapDimensions = new int[2];
+        static Bitmap bitmap;
+
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
+            
+            for (int i = 0; i < bitmapDimensions.Length; i++)
             {
-                intargs[i] = int.Parse(args[i]);
+                bitmapDimensions[i] = int.Parse(args[i]);
             }
             double[] doubleargs = new double[4];
             for (int i = 0; i < doubleargs.Length; i++)
             {
                 doubleargs[i] = double.Parse(args[i + 2]);
             }
-            string output = args[6];
+            fileName = args[6];
             // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
+            
             double xmin = doubleargs[0];
             double xmax = doubleargs[1];
             double ymin = doubleargs[2];
             double ymax = doubleargs[3];
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
+            double xstep = (xmax - xmin) / bitmapDimensions[0];
+            double ystep = (ymax - ymin) / bitmapDimensions[1];
 
-            List<ComplexNumber> koreny = new List<ComplexNumber>();
+            List<ComplexNumber> roots = new List<ComplexNumber>();
+            bitmap = new Bitmap(bitmapDimensions[0], bitmapDimensions[1]);
             // TODO: poly should be parameterised?
-            Polynomial p = new Polynomial();
-            p.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
-            p.ListOfComplexNumbers.Add(ComplexNumber.Zero);
-            p.ListOfComplexNumbers.Add(ComplexNumber.Zero);
+            Polynomial polynomial = new Polynomial();
+            polynomial.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
+            polynomial.ListOfComplexNumbers.Add(ComplexNumber.Zero);
+            polynomial.ListOfComplexNumbers.Add(ComplexNumber.Zero);
             //p.Coe.Add(Cplx.Zero);
-            p.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
-            Polynomial ptmp = p;
-            Polynomial pd = p.Derive();
+            polynomial.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
+            //Polynomial ptmp = p;
+            Polynomial pd = polynomial.Derive();
 
-            Console.WriteLine(p);
+            Console.WriteLine(polynomial);
             Console.WriteLine(pd);
 
-            var clrs = new Color[]
+            var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            var maxid = 0;
+            var maxId = 0;
 
             // TODO: cleanup!!!
             // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+            for (int i = 0; i < bitmapDimensions[0]; i++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int j = 0; j < bitmapDimensions[1]; j++)
                 {
                     // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
@@ -94,7 +99,7 @@ namespace NNPTPZ1
                     float it = 0;
                     for (int q = 0; q< 30; q++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
+                        var diff = polynomial.Eval(ox).Divide(pd.Eval(ox));
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
@@ -110,9 +115,9 @@ namespace NNPTPZ1
                     // find solution root number
                     var known = false;
                     var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
+                    for (int w = 0; w <roots.Count;w++)
                     {
-                        if (Math.Pow(ox.RealElement - koreny[w].RealElement, 2) + Math.Pow(ox.ImaginaryElement - koreny[w].ImaginaryElement, 2) <= 0.01)
+                        if (Math.Pow(ox.RealElement - roots[w].RealElement, 2) + Math.Pow(ox.ImaginaryElement - roots[w].ImaginaryElement, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -120,19 +125,19 @@ namespace NNPTPZ1
                     }
                     if (!known)
                     {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1; 
+                        roots.Add(ox);
+                        id = roots.Count;
+                        maxId = id + 1; 
                     }
 
                     // colorize pixel according to root number
                     //int vv = id;
                     //int vv = id * 50 + (int)it*5;
-                    var vv = clrs[id % clrs.Length];
+                    var vv = colors[id % colors.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
                     vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
                     //vv = Math.Min(Math.Max(0, vv), 255);
-                    bmp.SetPixel(j, i, vv);
+                    bitmap.SetPixel(j, i, vv);
                     //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
@@ -148,8 +153,16 @@ namespace NNPTPZ1
             //    }
             //}
 
-                    bmp.Save(output ?? "../../../out.png");
+
+            saveIntoFile();
+            //bitmap.Save(fileName ?? "../../../out.png");
+
             //Console.ReadKey();
         }
+        public static void saveIntoFile()
+        {
+            bitmap.Save(fileName ?? "../../../out.png");
+        }
+
     }
 }
