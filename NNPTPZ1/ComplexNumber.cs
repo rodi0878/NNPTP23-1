@@ -45,7 +45,7 @@ namespace NNPTPZ1
                     ImaginaryElement = (leftFactor.RealElement * rightFactor.ImaginaryElement) + (leftFactor.ImaginaryElement * rightFactor.RealElement)
                 };
             }             
-            internal ComplexNumber Divide(ComplexNumber complexNumber)
+            public ComplexNumber Divide(ComplexNumber complexNumber)
             {
                 // (aRe + aIm*i) / (bRe + bIm*i)
                 // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
