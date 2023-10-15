@@ -16,13 +16,13 @@ namespace NNPTPZ1
                 ImaginaryElement = 0
             };            
             
-            public ComplexNumber Add(ComplexNumber leftAddend)
+            public ComplexNumber Add(ComplexNumber rightAddend)
             {
-                ComplexNumber rightAddend = this;
+                ComplexNumber leftAddend = this;
                 return new ComplexNumber()
                 {
-                    RealElement = rightAddend.RealElement + leftAddend.RealElement,
-                    ImaginaryElement = rightAddend.ImaginaryElement + leftAddend.ImaginaryElement
+                    RealElement = leftAddend.RealElement + rightAddend.RealElement,
+                    ImaginaryElement = leftAddend.ImaginaryElement + rightAddend.ImaginaryElement
                 };
             }
 
@@ -42,7 +42,7 @@ namespace NNPTPZ1
                 return new ComplexNumber()
                 {
                     RealElement = (leftFactor.RealElement * rightFactor.RealElement) - (leftFactor.ImaginaryElement * rightFactor.ImaginaryElement),
-                    ImaginaryElement = leftFactor.RealElement * rightFactor.ImaginaryElement + leftFactor.ImaginaryElement * rightFactor.RealElement
+                    ImaginaryElement = (leftFactor.RealElement * rightFactor.ImaginaryElement) + (leftFactor.ImaginaryElement * rightFactor.RealElement)
                 };
             }             
             internal ComplexNumber Divide(ComplexNumber complexNumber)

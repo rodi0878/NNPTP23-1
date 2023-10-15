@@ -46,16 +46,16 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / intargs[0];
             double ystep = (ymax - ymin) / intargs[1];
 
-            List<Cplx> koreny = new List<Cplx>();
+            List<ComplexNumber> koreny = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(Cplx.Zero);
+            Polynomial p = new Polynomial();
+            p.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
+            p.ListOfComplexNumbers.Add(ComplexNumber.Zero);
+            p.ListOfComplexNumbers.Add(ComplexNumber.Zero);
             //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
-            Poly ptmp = p;
-            Poly pd = p.Derive();
+            p.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
+            Polynomial ptmp = p;
+            Polynomial pd = p.Derive();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
@@ -77,16 +77,16 @@ namespace NNPTPZ1
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    Cplx ox = new Cplx()
+                    ComplexNumber ox = new ComplexNumber()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        RealElement = x,
+                        ImaginaryElement = (float)(y)
                     };
 
-                    if (ox.Re == 0)
-                        ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (ox.RealElement == 0)
+                        ox.RealElement = 0.0001;
+                    if (ox.ImaginaryElement == 0)
+                        ox.ImaginaryElement = 0.0001f;
 
                     //Console.WriteLine(ox);
 
@@ -98,7 +98,7 @@ namespace NNPTPZ1
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(diff.RealElement, 2) + Math.Pow(diff.ImaginaryElement, 2) >= 0.5)
                         {
                             q--;
                         }
@@ -112,7 +112,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.RealElement - koreny[w].RealElement, 2) + Math.Pow(ox.ImaginaryElement - koreny[w].ImaginaryElement, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
