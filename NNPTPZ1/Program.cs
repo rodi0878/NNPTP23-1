@@ -60,17 +60,17 @@ namespace NNPTPZ1
             //p.Coe.Add(Cplx.Zero);
             polynomial.ListOfComplexNumbers.Add(new ComplexNumber() { RealElement = 1 });
             //Polynomial ptmp = p;
-            Polynomial pd = polynomial.Derive();
+            Polynomial derivedPolynomial = polynomial.Derive();
 
             Console.WriteLine(polynomial);
-            Console.WriteLine(pd);
+            Console.WriteLine(derivedPolynomial);
 
             var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            var maxId = 0;
+            //var maxId = 0;
 
             // TODO: cleanup!!!
             // for every pixel in image...
@@ -97,9 +97,9 @@ namespace NNPTPZ1
 
                     // find solution of equation using newton's iteration
                     float it = 0;
-                    for (int q = 0; q< 30; q++)
+                    for (int q = 0; q < 30; q++)
                     {
-                        var diff = polynomial.Eval(ox).Divide(pd.Eval(ox));
+                        var diff = polynomial.Eval(ox).Divide(derivedPolynomial.Eval(ox));
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
@@ -113,31 +113,30 @@ namespace NNPTPZ1
                     //Console.ReadKey();
 
                     // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w <roots.Count;w++)
+                     var rootNumber = 0;
+
+                    var known = false;                 
+                    for (int w = 0; w < roots.Count; w++)
                     {
                         if (Math.Pow(ox.RealElement - roots[w].RealElement, 2) + Math.Pow(ox.ImaginaryElement - roots[w].ImaginaryElement, 2) <= 0.01)
                         {
                             known = true;
-                            id = w;
+                            rootNumber = w;
                         }
                     }
                     if (!known)
                     {
                         roots.Add(ox);
-                        id = roots.Count;
-                        maxId = id + 1; 
+                        rootNumber = roots.Count;
+                        //maxId = id + 1;
                     }
 
                     // colorize pixel according to root number
                     //int vv = id;
                     //int vv = id * 50 + (int)it*5;
-                    var vv = colors[id % colors.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
+                    //Color vv = CalculatePixelColorAccordingToRootNumber(colors, it, id);
                     //vv = Math.Min(Math.Max(0, vv), 255);
-                    bitmap.SetPixel(j, i, vv);
+                    bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(colors, it, rootNumber));
                     //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
@@ -159,6 +158,15 @@ namespace NNPTPZ1
 
             //Console.ReadKey();
         }
+
+        public static Color CalculatePixelColorAccordingToRootNumber(Color[] colors, float it, int rootNumber)
+        {
+            Color pixelColor = colors[rootNumber % colors.Length];
+            pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
+            pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.G - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.B - (int)it * 2), 255));
+            return pixelColor;
+        }
+
         public static void saveIntoFile()
         {
             bitmap.Save(fileName ?? "../../../out.png");
