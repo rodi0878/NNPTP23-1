@@ -26,6 +26,7 @@ namespace NNPTPZ1
         static string fileName;
         static int[] bitmapDimensions = new int[2];
         static Bitmap bitmap;
+        static List<ComplexNumber> roots;
 
         static void Main(string[] args)
         {
@@ -50,7 +51,8 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / bitmapDimensions[0];
             double ystep = (ymax - ymin) / bitmapDimensions[1];
 
-            List<ComplexNumber> roots = new List<ComplexNumber>();
+            //List<ComplexNumber> roots = new List<ComplexNumber>();
+            roots = new List<ComplexNumber>();
             bitmap = new Bitmap(bitmapDimensions[0], bitmapDimensions[1]);
             // TODO: poly should be parameterised?
             Polynomial polynomial = new Polynomial();
@@ -113,23 +115,7 @@ namespace NNPTPZ1
                     //Console.ReadKey();
 
                     // find solution root number
-                     var rootNumber = 0;
-
-                    var known = false;                 
-                    for (int w = 0; w < roots.Count; w++)
-                    {
-                        if (Math.Pow(ox.RealElement - roots[w].RealElement, 2) + Math.Pow(ox.ImaginaryElement - roots[w].ImaginaryElement, 2) <= 0.01)
-                        {
-                            known = true;
-                            rootNumber = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        roots.Add(ox);
-                        rootNumber = roots.Count;
-                        //maxId = id + 1;
-                    }
+                    int rootNumber = getSolutionRootNumber(ox);
 
                     // colorize pixel according to root number
                     //int vv = id;
@@ -157,6 +143,28 @@ namespace NNPTPZ1
             //bitmap.Save(fileName ?? "../../../out.png");
 
             //Console.ReadKey();
+        }
+
+        private static int getSolutionRootNumber(ComplexNumber ox)
+        {
+            var rootNumber = 0;
+            var solutionFound = false;
+            for (int i = 0; i < roots.Count; i++)
+            {
+                if (Math.Pow(ox.RealElement - roots[i].RealElement, 2) + Math.Pow(ox.ImaginaryElement - roots[i].ImaginaryElement, 2) <= 0.01)
+                {
+                    solutionFound = true;
+                    rootNumber = i;
+                }
+            }
+            if (!solutionFound)
+            {
+                roots.Add(ox);
+                rootNumber = roots.Count;
+                //maxId = id + 1;
+            }
+
+            return rootNumber;
         }
 
         public static Color CalculatePixelColorAccordingToRootNumber(Color[] colors, float it, int rootNumber)
