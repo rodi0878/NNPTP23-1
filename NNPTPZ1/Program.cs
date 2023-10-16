@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Mathematics;
 using NNPTPZ1.Mathematics;
 
 namespace NNPTPZ1
@@ -40,7 +41,6 @@ namespace NNPTPZ1
             p.Coe.Add(new Cplx() { Re = 1 });
             p.Coe.Add(Cplx.Zero);
             p.Coe.Add(Cplx.Zero);
-            //p.Coe.Add(Cplx.Zero);
             p.Coe.Add(new Cplx() { Re = 1 });
             Poly pd = p.Derive();
 
@@ -73,8 +73,6 @@ namespace NNPTPZ1
                     if (ox.Imaginari == 0)
                         ox.Imaginari = 0.0001f;
 
-                    //Console.WriteLine(ox);
-
                     // find solution of equation using newton's iteration
                     float it = 0;
                     for (int q = 0; q< 30; q++)
@@ -82,15 +80,12 @@ namespace NNPTPZ1
                         var diff = p.Eval(ox).Divide(pd.Eval(ox));
                         ox = ox.Subtract(diff);
 
-                        //Console.WriteLine($"{q} {ox} -({diff})");
                         if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
                         {
                             q--;
                         }
                         it++;
                     }
-
-                    //Console.ReadKey();
 
                     // find solution root number
                     var known = false;
@@ -109,131 +104,18 @@ namespace NNPTPZ1
                         id = koreny.Count;
                     }
 
-                    // colorize pixel according to root number
-                    //int vv = id;
-                    //int vv = id * 50 + (int)it*5;
                     var vv = clrs[id % clrs.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
                     vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
-                    //vv = Math.Min(Math.Max(0, vv), 255);
                     bmp.SetPixel(j, i, vv);
-                    //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
-
-            // TODO: delete I suppose...
-            //for (int i = 0; i < 300; i++)
-            //{
-            //    for (int j = 0; j < 300; j++)
-            //    {
-            //        Color c = bmp.GetPixel(j, i);
-            //        int nv = (int)Math.Floor(c.R * (255.0 / maxid));
-            //        bmp.SetPixel(j, i, Color.FromArgb(nv, nv, nv));
-            //    }
-            //}
-
                     bmp.Save(output ?? "../../../out.png");
-            //Console.ReadKey();
         }
     }
 
     namespace Mathematics
     {
-        public class Poly
-        {
-            /// <summary>
-            /// Coe
-            /// </summary>
-            public List<Cplx> Coe { get; set; }
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public Poly() => Coe = new List<Cplx>();
-
-            public void Add(Cplx coe) =>
-                Coe.Add(coe);
-
-            /// <summary>
-            /// Derives this polynomial and creates new one
-            /// </summary>
-            /// <returns>Derivated polynomial</returns>
-            public Poly Derive()
-            {
-                Poly p = new Poly();
-                for (int q = 1; q < Coe.Count; q++)
-                {
-                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
-                }
-
-                return p;
-            }
-
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(double x)
-            {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
-                return y;
-            }
-
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(Cplx x)
-            {
-                Cplx s = Cplx.Zero;
-                for (int i = 0; i < Coe.Count; i++)
-                {
-                    Cplx coef = Coe[i];
-                    Cplx bx = x;
-                    int power = i;
-
-                    if (i > 0)
-                    {
-                        for (int j = 0; j < power - 1; j++)
-                            bx = bx.Multiply(x);
-
-                        coef = coef.Multiply(bx);
-                    }
-
-                    s = s.Add(coef);
-                }
-
-                return s;
-            }
-
-            /// <summary>
-            /// ToString
-            /// </summary>
-            /// <returns>String repr of polynomial</returns>
-            public override string ToString()
-            {
-                string s = "";
-                int i = 0;
-                for (; i < Coe.Count; i++)
-                {
-                    s += Coe[i];
-                    if (i > 0)
-                    {
-                        int j = 0;
-                        for (; j < i; j++)
-                        {
-                            s += "x";
-                        }
-                    }
-                    if (i+1<Coe.Count)
-                    s += " + ";
-                }
-                return s;
-            }
-        }
-
         public class Cplx
         {
             public double Re { get; set; }
@@ -258,7 +140,6 @@ namespace NNPTPZ1
             public Cplx Multiply(Cplx b)
             {
                 Cplx a = this;
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
                 return new Cplx()
                 {
                     Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
@@ -300,9 +181,6 @@ namespace NNPTPZ1
 
             internal Cplx Divide(Cplx b)
             {
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
                 var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
                 var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
 

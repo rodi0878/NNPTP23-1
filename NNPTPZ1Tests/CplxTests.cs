@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NNPTPZ1;
+using Mathematics;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
@@ -65,7 +66,7 @@ namespace NNPTPZ1.Mathematics.Tests
         [TestMethod()]
         public void AddTestPolynome()
         {
-            Poly poly = new Mathematics.Poly();
+            Poly poly = new Poly();
             poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
             poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
             poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
