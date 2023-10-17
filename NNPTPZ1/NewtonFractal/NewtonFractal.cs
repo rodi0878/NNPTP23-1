@@ -9,7 +9,7 @@ using NNPTPZ1.NewtonFractal.Settings;
 namespace NNPTPZ1.NewtonFractal
 {
     /// <summary>
-    /// 
+    /// Used to generate Newton's fractals.
     /// </summary>
     public class NewtonFractal
     {
@@ -33,9 +33,9 @@ namespace NNPTPZ1.NewtonFractal
         }
 
         /// <summary>
-        /// 
+        /// Calculates Newton's fractals based on the settings passed.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Bitmap of the resulting Newton fractal image.</returns>
         public Bitmap Compute()
         {
             Polygon polygon = CreateDefaultPolygonForCalculation();
@@ -49,7 +49,7 @@ namespace NNPTPZ1.NewtonFractal
             {
                 for (int y = 0; y < _screenSize.Height; y++)
                 {
-                    CalculatePixelColor(polygon, polygonDerived, new Coordinate(x, y));
+                    CalculatePixelColor(new PolygonPair(polygon, polygonDerived), new Coordinate(x, y));
                 }
             }
 
@@ -65,16 +65,12 @@ namespace NNPTPZ1.NewtonFractal
             polygon.Coefficients.Add(new ComplexNumber { RealPart = 1 });
             return polygon;
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="polygon"></param>
-        /// <param name="polygonDerived"></param>
-        /// <param name="coordinate"></param>
-        private void CalculatePixelColor(Polygon polygon, Polygon polygonDerived, Coordinate coordinate)
+
+        private void CalculatePixelColor(PolygonPair polygons, Coordinate coordinate)
         {
             ComplexNumber complexNumber = CreateComplexNumberByCoordinates(coordinate);
+            Polygon polygon = polygons.Polygon;
+            Polygon polygonDerived = polygons.PolygonDerived;
 
             // find solution of equation using newton's iteration
             int iteration = 0;
@@ -89,37 +85,32 @@ namespace NNPTPZ1.NewtonFractal
                 iteration++;
             }
 
-            int id = FindSolutionRootNumber(complexNumber);
+            int rootNumberId = FindSolutionRootNumber(complexNumber);
 
-            ColorizePixel(id, iteration, coordinate);
+            ColorizePixel(rootNumberId, iteration, coordinate);
         }
         
-        /// <summary>
-        /// Find solution root number
-        /// </summary>
-        /// <param name="complexNumber"></param>
-        /// <returns></returns>
         private int FindSolutionRootNumber(ComplexNumber complexNumber)
         {
             bool known = false;
-            int id = 0;
+            int rootNumberId = 0;
             for (int i = 0; i < _roots.Count; i++)
             {
                 if (Math.Pow(complexNumber.RealPart - _roots[i].RealPart, 2)
                     + Math.Pow(complexNumber.ImaginaryPart - _roots[i].ImaginaryPart, 2) <= 0.01)
                 {
                     known = true;
-                    id = i;
+                    rootNumberId = i;
                 }
             }
 
             if (!known)
             {
                 _roots.Add(complexNumber);
-                id = _roots.Count;
+                rootNumberId = _roots.Count;
             }
 
-            return id;
+            return rootNumberId;
         }
         
         private ComplexNumber CreateComplexNumberByCoordinates(Coordinate coordinate)
@@ -143,15 +134,9 @@ namespace NNPTPZ1.NewtonFractal
             return complexNumber;
         }
 
-        /// <summary>
-        /// Colorize pixel according to root number
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="iteration"></param>
-        /// <param name="coordinate"></param>
-        private void ColorizePixel(int id, int iteration, Coordinate coordinate)
+        private void ColorizePixel(int rootNumberId, int iteration, Coordinate coordinate)
         {
-            Color selectedColor = _colorPalette[id % _colorPalette.Length];
+            Color selectedColor = _colorPalette[rootNumberId % _colorPalette.Length];
             Color adjustedSelectedColor = Color.FromArgb(
                 Math.Min(Math.Max(0, selectedColor.R - iteration * 2), 255),
                 Math.Min(Math.Max(0, selectedColor.G - iteration * 2), 255),

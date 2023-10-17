@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Mathematics\ComplexNumber.cs" />
     <Compile Include="Mathematics\Polygon.cs" />
+    <Compile Include="Mathematics\PolygonPair.cs" />
     <Compile Include="NewtonFractal\Coordinates\BoundaryCoordinates.cs" />
     <Compile Include="NewtonFractal\Coordinates\Coordinate.cs" />
     <Compile Include="NewtonFractal\NewtonFractal.cs" />
