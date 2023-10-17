@@ -142,7 +142,7 @@ namespace NNPTPZ1.NewtonFractal
                 Math.Min(Math.Max(0, selectedColor.G - iteration * 2), 255),
                 Math.Min(Math.Max(0, selectedColor.B - iteration * 2), 255));
             
-            _bmp.SetPixel(coordinate.X, coordinate.Y, adjustedSelectedColor);
+            _bmp.SetPixel(coordinate.Y, coordinate.X, adjustedSelectedColor);
         }
     }
 }
