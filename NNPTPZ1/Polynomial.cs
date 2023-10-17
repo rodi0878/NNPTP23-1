@@ -87,11 +87,14 @@ namespace NNPTPZ1
                 {
                     StringVersionOfPolynomial += ListOfComplexNumbers[i];
                     if (i > 0)
-                    {                    
-                        for (int j = 0; j < i; j++)
-                        {
-                            StringVersionOfPolynomial += "x";
-                        }
+                    {
+
+                        StringVersionOfPolynomial += new string('x', i);
+                        //odstranit cyklus za rovnou přidání daého počtu x
+                        //for (int j = 0; j < i; j++)
+                        //{
+                        //    StringVersionOfPolynomial += "x";
+                        //}
                     }
                     if (i + 1 < ListOfComplexNumbers.Count)
                         StringVersionOfPolynomial += " + ";
