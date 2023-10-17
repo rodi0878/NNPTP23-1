@@ -9,7 +9,7 @@ using NNPTPZ1.NewtonFractal.Settings;
 namespace NNPTPZ1.NewtonFractal
 {
     /// <summary>
-    /// Used to generate Newton's fractals.
+    /// Used to generate Newton's fractals
     /// </summary>
     public class NewtonFractal
     {
@@ -33,9 +33,9 @@ namespace NNPTPZ1.NewtonFractal
         }
 
         /// <summary>
-        /// Calculates Newton's fractals based on the settings passed.
+        /// Calculates Newton's fractals based on the settings passed
         /// </summary>
-        /// <returns>Bitmap of the resulting Newton fractal image.</returns>
+        /// <returns>Bitmap of the resulting Newton fractal image</returns>
         public Bitmap Compute()
         {
             Polygon polygon = CreateDefaultPolygonForCalculation();

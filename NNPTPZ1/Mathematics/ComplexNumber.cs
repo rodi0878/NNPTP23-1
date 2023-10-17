@@ -62,7 +62,7 @@ namespace NNPTPZ1.Mathematics
         
         internal ComplexNumber Divide(ComplexNumber divisor)
         {
-            var multipliedWithDivisor = this.Multiply(new ComplexNumber() { RealPart = divisor.RealPart, ImaginaryPart = -divisor.ImaginaryPart });
+            var multipliedWithDivisor = Multiply(new ComplexNumber() { RealPart = divisor.RealPart, ImaginaryPart = -divisor.ImaginaryPart });
             var divisorModulusSquared = divisor.RealPart * divisor.RealPart + divisor.ImaginaryPart * divisor.ImaginaryPart;
 
             return new ComplexNumber()

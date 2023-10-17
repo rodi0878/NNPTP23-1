@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace NNPTPZ1.Mathematics
 {
     public class Polygon
     {
-        /// <summary>
-        /// Coefficients
-        /// </summary>
         public List<ComplexNumber> Coefficients { get; set; }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public Polygon() => Coefficients = new List<ComplexNumber>();
 
         public void Add(ComplexNumber coe) =>
@@ -82,23 +77,22 @@ namespace NNPTPZ1.Mathematics
         /// <returns>String repr of polynomial</returns>
         public override string ToString()
         {
-            string s = "";
-            int i = 0;
-            for (; i < Coefficients.Count; i++)
+            StringBuilder polynomialStringBuilder = new StringBuilder();
+
+            for (int i = 0; i < Coefficients.Count; i++)
             {
-                s += Coefficients[i];
-                if (i > 0)
+                polynomialStringBuilder.Append(Coefficients[i]);
+
+                for (int j = 0; j < i; j++)
                 {
-                    int j = 0;
-                    for (; j < i; j++)
-                    {
-                        s += "x";
-                    }
+                    polynomialStringBuilder.Append("x");
                 }
-                if (i+1<Coefficients.Count)
-                    s += " + ";
+                
+                if (i + 1 < Coefficients.Count)
+                    polynomialStringBuilder.Append(" + ");
             }
-            return s;
+
+            return polynomialStringBuilder.ToString();
         }
     }
 }
