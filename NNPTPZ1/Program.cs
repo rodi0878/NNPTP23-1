@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Mathematics;
-using NNPTPZ1.Mathematics;
 
 namespace NNPTPZ1
 {
@@ -24,9 +23,9 @@ namespace NNPTPZ1
             {
                 doubleargs[i] = double.Parse(args[i + 2]);
             }
-            string output = args[6];
+            string outputFile = args[6];
             // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
+            Bitmap bitmap = new Bitmap(intargs[0], intargs[1]);
             double xmin = doubleargs[0];
             double xmax = doubleargs[1];
             double ymin = doubleargs[2];
@@ -35,19 +34,19 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / intargs[0];
             double ystep = (ymax - ymin) / intargs[1];
 
-            List<Cplx> koreny = new List<Cplx>();
+            List<ComplexNumber> roots = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
-            Poly pd = p.Derive();
+            Polynome polynome = new Polynome();
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            Polynome derivatedPolynome = polynome.DerivatePolynome();
 
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            Console.WriteLine(polynome);
+            Console.WriteLine(derivatedPolynome);
 
-            var clrs = new Color[]
+            Color[] colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
@@ -62,134 +61,55 @@ namespace NNPTPZ1
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    Cplx ox = new Cplx()
+                    ComplexNumber complexNumber = new ComplexNumber()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        RealPart = x,
+                        ImaginariPart = (float)(y)
                     };
 
-                    if (ox.Re == 0)
-                        ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (complexNumber.RealPart == 0)
+                        complexNumber.RealPart = 0.0001;
+                    if (complexNumber.ImaginariPart == 0)
+                        complexNumber.ImaginariPart = 0.0001f;
 
                     // find solution of equation using newton's iteration
                     float it = 0;
-                    for (int q = 0; q< 30; q++)
+                    for (int k = 0; k < 30; k++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                        ox = ox.Subtract(diff);
+                        ComplexNumber polynomialDifference = polynome.EvaluatePolynome(complexNumber).Divide(derivatedPolynome.EvaluatePolynome(complexNumber));
+                        complexNumber = complexNumber.Subtract(polynomialDifference);
 
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(polynomialDifference.RealPart, 2) + Math.Pow(polynomialDifference.ImaginariPart, 2) >= 0.5)
                         {
-                            q--;
+                            k--;
                         }
                         it++;
                     }
 
                     // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
+                    bool known = false;
+                    int id = 0;
+                    for (int l = 0; l < roots.Count; l++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(complexNumber.RealPart - roots[l].RealPart, 2) + Math.Pow(complexNumber.ImaginariPart - roots[l].ImaginariPart, 2) <= 0.01)
                         {
                             known = true;
-                            id = w;
+                            id = l;
                         }
                     }
                     if (!known)
                     {
-                        koreny.Add(ox);
-                        id = koreny.Count;
+                        roots.Add(complexNumber);
+                        id = roots.Count;
                     }
 
-                    var vv = clrs[id % clrs.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
-                    bmp.SetPixel(j, i, vv);
+                    Color pixelColor = colors[id % colors.Length];
+                    pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
+                    pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.G - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.B - (int)it * 2), 255));
+                    bitmap.SetPixel(j, i, pixelColor);
                 }
             }
-                    bmp.Save(output ?? "../../../out.png");
-        }
-    }
-
-    namespace Mathematics
-    {
-        public class Cplx
-        {
-            public double Re { get; set; }
-            public float Imaginari { get; set; }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is Cplx)
-                {
-                    Cplx x = obj as Cplx;
-                    return x.Re == Re && x.Imaginari == Imaginari;
-                }
-                return base.Equals(obj);
-            }
-
-            public readonly static Cplx Zero = new Cplx()
-            {
-                Re = 0,
-                Imaginari = 0
-            };
-
-            public Cplx Multiply(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                    Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
-                };
-            }
-            public double GetAbS()
-            {
-                return Math.Sqrt( Re * Re + Imaginari * Imaginari);
-            }
-
-            public Cplx Add(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re + b.Re,
-                    Imaginari = a.Imaginari + b.Imaginari
-                };
-            }
-            public double GetAngleInDegrees()
-            {
-                return Math.Atan(Imaginari / Re);
-            }
-            public Cplx Subtract(Cplx b)
-            {
-                Cplx a = this;
-                return new Cplx()
-                {
-                    Re = a.Re - b.Re,
-                    Imaginari = a.Imaginari - b.Imaginari
-                };
-            }
-
-            public override string ToString()
-            {
-                return $"({Re} + {Imaginari}i)";
-            }
-
-            internal Cplx Divide(Cplx b)
-            {
-                var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
-                var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
-
-                return new Cplx()
-                {
-                    Re = tmp.Re / tmp2,
-                    Imaginari = (float)(tmp.Imaginari / tmp2)
-                };
-            }
+            bitmap.Save(outputFile ?? "../../../out.png");
         }
     }
 }
