@@ -21,7 +21,7 @@ namespace NNPTPZ1
     /// This program should produce Newton fractals.
     /// See more at: https://en.wikipedia.org/wiki/Newton_fractal
     /// </summary>
-    class Program
+    partial class Program
     {
         static string fileName;
         static int[] bitmapDimensions;
@@ -35,7 +35,7 @@ namespace NNPTPZ1
             axisLimits = new double[4];
             ComplexNumber pixelWithCoordinates = new ComplexNumber();
             roots = new List<ComplexNumber>();
-            bitmap = new Bitmap(bitmapDimensions[0], bitmapDimensions[1]);
+            //bitmap = new Bitmap(bitmapDimensions[0], bitmapDimensions[1]);
 
             for (int i = 0; i < bitmapDimensions.Length; i++)
             {
@@ -46,6 +46,8 @@ namespace NNPTPZ1
             {
                 axisLimits[i] = double.Parse(args[i + 2]);
             }
+
+            bitmap = new Bitmap(bitmapDimensions[0], bitmapDimensions[1]);
             fileName = args[6];
             // TODO: add parameters from args?
 
@@ -65,10 +67,10 @@ namespace NNPTPZ1
             Console.WriteLine(polynomial);
             Console.WriteLine(derivedPolynomial);
 
-            var colors = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
+            //var colors = new Color[]
+            //{
+            //    Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+            //};
 
             //var maxId = 0;
 
@@ -108,7 +110,8 @@ namespace NNPTPZ1
                     //int vv = id * 50 + (int)it*5;
                     //Color vv = CalculatePixelColorAccordingToRootNumber(colors, it, id);
                     //vv = Math.Min(Math.Max(0, vv), 255);
-                    bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(colors, it, rootNumber));
+                    //bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(colors, it, rootNumber));
+                    bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(it, rootNumber));
                     //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
@@ -183,10 +186,10 @@ namespace NNPTPZ1
             return rootNumber;
         }
 
-        public static Color CalculatePixelColorAccordingToRootNumber(Color[] colors, float it, int rootNumber)
+        public static Color CalculatePixelColorAccordingToRootNumber(/*Color[] colors,*/ float it, int rootNumber)
         {
-            //Color pixelColor = Color.FromName(((Colors) (rootNumber % Enum.GetNames(typeof(Colors)).Length)).ToString());
-            Color pixelColor = colors[rootNumber % colors.Length];
+            Color pixelColor = Color.FromName(((Colors) (rootNumber % Enum.GetNames(typeof(Colors)).Length)).ToString());
+            //Color pixelColor = colors[rootNumber % colors.Length];
             pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
             pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.G - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.B - (int)it * 2), 255));
             return pixelColor;
@@ -195,19 +198,6 @@ namespace NNPTPZ1
         public static void SaveIntoFile()
         {
             bitmap.Save(fileName ?? "../../../out.png");
-        }
-
-
-        public enum Colors { 
-            Red, 
-            Blue,
-            Green, 
-            Yellow,
-            Orange, 
-            Fuchsia, 
-            Gold, 
-            Cyan, 
-            Magenta     
         }
     }
 }
