@@ -86,7 +86,7 @@ namespace NNPTPZ1
                     //Console.WriteLine(ox);
 
                     // find solution of equation using newton's iteration
-                    float it = 0;
+                    //float it = 0;
                     for (int q = 0; q < 30; q++)
                     {
                         var diff = polynomial.Eval(pixelWithCoordinates).Divide(derivedPolynomial.Eval(pixelWithCoordinates));
@@ -97,7 +97,7 @@ namespace NNPTPZ1
                         {
                             q--;
                         }
-                        it++;
+                        //it++;
                     }
 
                     //Console.ReadKey();
@@ -111,7 +111,7 @@ namespace NNPTPZ1
                     //Color vv = CalculatePixelColorAccordingToRootNumber(colors, it, id);
                     //vv = Math.Min(Math.Max(0, vv), 255);
                     //bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(colors, it, rootNumber));
-                    bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(it, rootNumber));
+                    bitmap.SetPixel(j, i, CalculatePixelColorAccordingToRootNumber(30, rootNumber));
                     //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
                 }
             }
