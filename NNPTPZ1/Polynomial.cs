@@ -80,7 +80,6 @@ namespace NNPTPZ1
                     StringVersionOfPolynomial += ListOfComplexNumbers[i];
                     if (i > 0)
                     {
-
                         StringVersionOfPolynomial += new string('x', i);
                     }
                     if (i + 1 < ListOfComplexNumbers.Count)

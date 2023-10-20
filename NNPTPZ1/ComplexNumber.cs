@@ -55,7 +55,7 @@ namespace NNPTPZ1
                     ImaginaryElement = divident.ImaginaryElement / divisor
                 };
             }            
-            public bool Equals(object inputObject)
+            public override bool Equals(object inputObject)
             {
                 if (inputObject is ComplexNumber)
                 {
