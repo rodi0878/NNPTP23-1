@@ -38,7 +38,6 @@ namespace NNPTPZ1
             public ComplexNumber Multiply(ComplexNumber rightFactor)
             {
                 ComplexNumber leftFactor = this;
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
                 return new ComplexNumber()
                 {
                     RealElement = (leftFactor.RealElement * rightFactor.RealElement) - (leftFactor.ImaginaryElement * rightFactor.ImaginaryElement),
@@ -47,9 +46,6 @@ namespace NNPTPZ1
             }             
             public ComplexNumber Divide(ComplexNumber complexNumber)
             {
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
                 var divident = this.Multiply(new ComplexNumber() { RealElement = complexNumber.RealElement, ImaginaryElement = -complexNumber.ImaginaryElement });
                 var divisor = (complexNumber.RealElement * complexNumber.RealElement) + (complexNumber.ImaginaryElement * complexNumber.ImaginaryElement);
 
@@ -59,7 +55,7 @@ namespace NNPTPZ1
                     ImaginaryElement = divident.ImaginaryElement / divisor
                 };
             }            
-            public override bool Equals(object inputObject)
+            public bool Equals(object inputObject)
             {
                 if (inputObject is ComplexNumber)
                 {
