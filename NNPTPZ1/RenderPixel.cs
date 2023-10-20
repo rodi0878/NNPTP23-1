@@ -32,7 +32,7 @@ namespace NNPTPZ1
 
         }
 
-        private void RenderBitmap(Polynomial polynomial, Polynomial derivedPolynomial)
+        public void RenderBitmap(Polynomial polynomial, Polynomial derivedPolynomial)
         {
             for (int i = 0; i < bitmap.Width; i++)
             {
@@ -49,7 +49,7 @@ namespace NNPTPZ1
                 }
             }
         }
-        private void FindBitmapCoordinatesOfPixel(int i, int j)
+        public void FindBitmapCoordinatesOfPixel(int i, int j)
         {
 
             double xmin = double.Parse(InputArguments[2]);
@@ -77,7 +77,7 @@ namespace NNPTPZ1
 
         }
 
-        private int CalculatingTheEquationByNewtonsIteration(Polynomial polynomial, Polynomial derivedPolynomial)
+        public int CalculatingTheEquationByNewtonsIteration(Polynomial polynomial, Polynomial derivedPolynomial)
         {
             int numberOfIterations = 0;
             for (int i = 0; i < baseNumberOfIterations; i++)

@@ -7,14 +7,8 @@ namespace NNPTPZ1
     {
         public class Polynomial
         {
-            /// <summary>
-            /// Coe
-            /// </summary>
             public List<ComplexNumber> ListOfComplexNumbers { get; set; }
 
-            /// <summary>
-            /// Constructor
-            /// </summary>
             public Polynomial() => ListOfComplexNumbers = new List<ComplexNumber>();
 
             public void Add(ComplexNumber newComplexNumber) =>
@@ -26,13 +20,13 @@ namespace NNPTPZ1
             /// <returns>Derivated polynomial</returns>
             public Polynomial Derive()
             {
-                Polynomial newPolynomial = new Polynomial();
+                Polynomial derivedPolynomial = new Polynomial();
                 for (int i = 1; i < ListOfComplexNumbers.Count; i++)
                 {
-                    newPolynomial.ListOfComplexNumbers.Add(ListOfComplexNumbers[i].Multiply(new ComplexNumber() { RealElement = i }));
+                    derivedPolynomial.ListOfComplexNumbers.Add(ListOfComplexNumbers[i].Multiply(new ComplexNumber() { RealElement = i }));
                 }
 
-                return newPolynomial;
+                return derivedPolynomial;
             }
 
             /// <summary>
@@ -53,17 +47,15 @@ namespace NNPTPZ1
             /// <returns>y</returns>
             public ComplexNumber Eval(ComplexNumber pointAsComplexNumber)
             {
-                int power;
                 ComplexNumber evaluatedComplexNumber = ComplexNumber.Zero;
                 for (int i = 0; i < ListOfComplexNumbers.Count; i++)
                 {
                     ComplexNumber complexNumberFromList = ListOfComplexNumbers[i];
                     ComplexNumber multipliedComplexNumber = pointAsComplexNumber;
-                    power = i;
 
                     if (i > 0)
                     {
-                        for (int j = 0; j < power - 1; j++)
+                        for (int j = 0; j < i - 1; j++)
                             multipliedComplexNumber = multipliedComplexNumber.Multiply(pointAsComplexNumber);
 
                         complexNumberFromList = complexNumberFromList.Multiply(multipliedComplexNumber);
@@ -90,11 +82,6 @@ namespace NNPTPZ1
                     {
 
                         StringVersionOfPolynomial += new string('x', i);
-                        //odstranit cyklus za rovnou přidání daého počtu x
-                        //for (int j = 0; j < i; j++)
-                        //{
-                        //    StringVersionOfPolynomial += "x";
-                        //}
                     }
                     if (i + 1 < ListOfComplexNumbers.Count)
                         StringVersionOfPolynomial += " + ";
