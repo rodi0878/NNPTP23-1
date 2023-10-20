@@ -34,11 +34,11 @@ namespace NNPTPZ1
 
         public void RenderBitmap(Polynomial polynomial, Polynomial derivedPolynomial)
         {
+            // for every pixel in image...
             for (int i = 0; i < bitmap.Width; i++)
             {
                 for (int j = 0; j < bitmap.Height; j++)
                 {
-
                     FindBitmapCoordinatesOfPixel(i, j);
 
                     int numberOfIterations = CalculatingTheEquationByNewtonsIteration(polynomial, derivedPolynomial);
@@ -49,6 +49,8 @@ namespace NNPTPZ1
                 }
             }
         }
+
+        // find "world" coordinates of pixel
         public void FindBitmapCoordinatesOfPixel(int row, int column)
         {
             double xmin = double.Parse(InputArguments[2]);
@@ -72,6 +74,7 @@ namespace NNPTPZ1
 
         }
 
+        // find solution of equation using newton's iteration
         public int CalculatingTheEquationByNewtonsIteration(Polynomial polynomial, Polynomial derivedPolynomial)
         {
             int numberOfIterations = 0;
@@ -90,6 +93,7 @@ namespace NNPTPZ1
             return numberOfIterations;
         }
 
+        // find solution root number
         private int getSolutionRootNumber(ComplexNumber pixelWithCoordinates)
         {
             int  rootNumber = 0;
@@ -112,6 +116,7 @@ namespace NNPTPZ1
             return rootNumber;
         }
 
+        // colorize pixel according to root number
         public Color CalculatePixelColorAccordingToRootNumber(int numberOfIterations, int rootNumber)
         {
             Color pixelColor = Color.FromName(((Colors)(rootNumber % Enum.GetNames(typeof(Colors)).Length)).ToString());
