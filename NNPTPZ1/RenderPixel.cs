@@ -49,20 +49,15 @@ namespace NNPTPZ1
                 }
             }
         }
-        public void FindBitmapCoordinatesOfPixel(int i, int j)
+        public void FindBitmapCoordinatesOfPixel(int row, int column)
         {
-
             double xmin = double.Parse(InputArguments[2]);
             double xmax = double.Parse(InputArguments[3]);
             double ymin = double.Parse(InputArguments[4]);
             double ymax = double.Parse(InputArguments[5]);
 
-            //double xstep = (xmax - xmin) / int.Parse(InputArguments[0]);
-            //double ystep = (ymax - ymin) / int.Parse(InputArguments[1]);
-
-
-            double coordinateY = ymin + i * ((ymax - ymin) / int.Parse(InputArguments[1]));
-            double coordinateX = xmin + j * ((xmax - xmin) / int.Parse(InputArguments[0]));
+            double coordinateY = ymin + row * ((ymax - ymin) / int.Parse(InputArguments[1]));
+            double coordinateX = xmin + column * ((xmax - xmin) / int.Parse(InputArguments[0]));
 
             pixelWithCoordinates = new ComplexNumber()
             {
@@ -85,7 +80,6 @@ namespace NNPTPZ1
                 var quotient = polynomial.Eval(pixelWithCoordinates).Divide(derivedPolynomial.Eval(pixelWithCoordinates));
                 pixelWithCoordinates = pixelWithCoordinates.Subtract(quotient);
 
-                //Console.WriteLine($"{q} {ox} -({diff})");
                 if (Math.Pow(quotient.RealElement, 2) + Math.Pow(quotient.ImaginaryElement, 2) >= 0.5)
                 {
                     i--;
@@ -113,17 +107,14 @@ namespace NNPTPZ1
             {
                 roots.Add(pixelWithCoordinates);
                 rootNumber = roots.Count;
-                //maxId = id + 1;
             }
 
             return rootNumber;
         }
 
-        public Color CalculatePixelColorAccordingToRootNumber(/*Color[] colors,*/ int numberOfIterations, int rootNumber)
+        public Color CalculatePixelColorAccordingToRootNumber(int numberOfIterations, int rootNumber)
         {
             Color pixelColor = Color.FromName(((Colors)(rootNumber % Enum.GetNames(typeof(Colors)).Length)).ToString());
-            //Color pixelColor = colors[rootNumber % colors.Length];
-            //pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
             pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - numberOfIterations * 2), 255), 
                 Math.Min(Math.Max(0, pixelColor.G - numberOfIterations * 2), 255), Math.Min(Math.Max(0, pixelColor.B - numberOfIterations * 2), 255));
             return pixelColor;
