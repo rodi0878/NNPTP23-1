@@ -22,6 +22,14 @@ namespace NNPTPZ1
 
         public RenderPixel(string[] args) {
 
+            //Input arguments:
+            //[0] - Image width
+            //[1] - Image height
+            //[2] - Minimum on x-axis
+            //[3] - Maximum on x-axis
+            //[4] - Minimum on y-axis
+            //[5] - Maximum on y-axis
+            //[6] - Name of the save file
             InputArguments = args;
 
             bitmap = new Bitmap(int.Parse(InputArguments[0]), int.Parse(InputArguments[1]));
@@ -129,10 +137,5 @@ namespace NNPTPZ1
         {
             bitmap.Save(InputArguments[6] ?? "../../../out.png");
         }
-
-
-
-
-
     }
 }
