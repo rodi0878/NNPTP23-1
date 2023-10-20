@@ -67,6 +67,8 @@ namespace NNPTPZ1
             Console.WriteLine(polynomial);
             Console.WriteLine(derivedPolynomial);
 
+            //RenderPixel render = new RenderPixel(args);
+
             //var colors = new Color[]
             //{
             //    Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
@@ -166,14 +168,15 @@ namespace NNPTPZ1
 
         private static int getSolutionRootNumber(ComplexNumber pixelWithCoordinates)
         {
-            var rootNumber = 0;
-            var solutionFound = false;
+            int rootNumber = 0;
+            bool solutionFound = false;
             for (int i = 0; i < roots.Count; i++)
             {
                 if (Math.Pow(pixelWithCoordinates.RealElement - roots[i].RealElement, 2) + Math.Pow(pixelWithCoordinates.ImaginaryElement - roots[i].ImaginaryElement, 2) <= 0.01)
                 {
                     solutionFound = true;
                     rootNumber = i;
+                    break;
                 }
             }
             if (!solutionFound)
@@ -190,7 +193,7 @@ namespace NNPTPZ1
         {
             Color pixelColor = Color.FromName(((Colors) (rootNumber % Enum.GetNames(typeof(Colors)).Length)).ToString());
             //Color pixelColor = colors[rootNumber % colors.Length];
-            pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
+            //pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
             pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.G - (int)it * 2), 255), Math.Min(Math.Max(0, pixelColor.B - (int)it * 2), 255));
             return pixelColor;
         }
