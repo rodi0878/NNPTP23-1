@@ -44,11 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineArguments.cs" />
+    <Compile Include="Fractal\FractalGenerator.cs" />
+    <Compile Include="Fractal\FractalParameters.cs" />
+    <Compile Include="Mathematics\Complex.cs" />
+    <Compile Include="Mathematics\Complex.Extensions.cs" />
+    <Compile Include="Mathematics\Polynomial.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
