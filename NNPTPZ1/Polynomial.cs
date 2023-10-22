@@ -36,8 +36,7 @@ namespace NNPTPZ1
             /// <returns>y</returns>
             public ComplexNumber Eval(double pointAsDecimalNumber)
             {
-                var evaluationResult = Eval(new ComplexNumber() { RealElement = pointAsDecimalNumber, ImaginaryElement = 0 });
-                return evaluationResult;
+                return Eval(new ComplexNumber() { RealElement = pointAsDecimalNumber, ImaginaryElement = 0 });
             }
 
             /// <summary>
