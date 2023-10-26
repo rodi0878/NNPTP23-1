@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NNPTPZ1
+﻿namespace NNPTPZ1
 {
     public sealed class FractalParameters
     {

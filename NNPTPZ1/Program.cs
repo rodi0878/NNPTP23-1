@@ -1,9 +1,5 @@
 ﻿using NNPTPZ1.Fractal;
-using NNPTPZ1.Mathematics;
-using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 
 namespace NNPTPZ1
 {

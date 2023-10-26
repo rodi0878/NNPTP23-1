@@ -4,7 +4,6 @@ using System.Text;
 
 namespace NNPTPZ1.Mathematics
 {
-    [DebuggerDisplay("Polynomial: {ToString()}")]
     public class Polynomial
     {
         #region Properties
