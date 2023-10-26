@@ -69,9 +69,9 @@ namespace NNPTPZ1.Mathematics
         }
         #endregion
         #region Operators
-        public static Complex operator +(Complex leftAddend, Complex secondAddend)
+        public static Complex operator +(Complex firstAddend, Complex secondAddend)
         {
-            return leftAddend.Add(secondAddend);
+            return firstAddend.Add(secondAddend);
         }
         public static Complex operator -(Complex minuend, Complex subtrahend)
         {
