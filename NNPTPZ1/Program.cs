@@ -25,115 +25,114 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
+            int[] intArguments = new int[2];
+            for (int i = 0; i < intArguments.Length; i++)
             {
-                intargs[i] = int.Parse(args[i]);
+                intArguments[i] = int.Parse(args[i]);
             }
-            double[] doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
+            double[] doubleArguments = new double[4];
+            for (int i = 0; i < doubleArguments.Length; i++)
             {
-                doubleargs[i] = double.Parse(args[i + 2]);
+                doubleArguments[i] = double.Parse(args[i + 2]);
             }
             string output = args[6];
             // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
-            double xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            double ymin = doubleargs[2];
-            double ymax = doubleargs[3];
+            Bitmap bitmapImage = new Bitmap(intArguments[0], intArguments[1]);
+            double xmin = doubleArguments[0];
+            double xmax = doubleArguments[1];
+            double ymin = doubleArguments[2];
+            double ymax = doubleArguments[3];
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
+            double xstep = (xmax - xmin) / intArguments[0];
+            double ystep = (ymax - ymin) / intArguments[1];
 
-            List<Cplx> koreny = new List<Cplx>();
+            List<Cplx> roots = new List<Cplx>();
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(Cplx.Zero);
-            //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
-            Poly ptmp = p;
-            Poly pd = p.Derive();
+            Poly polynomial = new Poly();
+            polynomial.Coe.Add(new Cplx() { Re = 1 });
+            polynomial.Coe.Add(Cplx.Zero);
+            polynomial.Coe.Add(Cplx.Zero);
+            //polynomial.Coe.Add(Cplx.Zero);
+            polynomial.Coe.Add(new Cplx() { Re = 1 });
+            Poly polynomialDerivative = polynomial.Derive();
 
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            Console.WriteLine(polynomial);
+            Console.WriteLine(polynomialDerivative);
 
-            var clrs = new Color[]
+            var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            var maxid = 0;
+            var maxRootId = 0;
 
             // TODO: cleanup!!!
             // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+            for (int i = 0; i < intArguments[0]; i++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int j = 0; j < intArguments[1]; j++)
                 {
                     // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    double currentY = ymin + i * ystep;
+                    double currentX = xmin + j * xstep;
 
-                    Cplx ox = new Cplx()
+                    Cplx currentComplex = new Cplx()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        Re = currentX,
+                        Imaginari = (float)(currentY)
                     };
 
-                    if (ox.Re == 0)
-                        ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (currentComplex.Re == 0)
+                        currentComplex.Re = 0.0001;
+                    if (currentComplex.Imaginari == 0)
+                        currentComplex.Imaginari = 0.0001f;
 
                     //Console.WriteLine(ox);
 
                     // find solution of equation using newton's iteration
-                    float it = 0;
+                    float iterations = 0;
                     for (int q = 0; q< 30; q++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                        ox = ox.Subtract(diff);
+                        var difference = polynomial.Eval(currentComplex).Divide(polynomialDerivative.Eval(currentComplex));
+                        currentComplex = currentComplex.Subtract(difference);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(difference.Re, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5)
                         {
                             q--;
                         }
-                        it++;
+                        iterations++;
                     }
 
                     //Console.ReadKey();
 
                     // find solution root number
-                    var known = false;
+                    var isKnownRoot = false;
                     var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
+                    for (int w = 0; w <roots.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(currentComplex.Re- roots[w].Re, 2) + Math.Pow(currentComplex.Imaginari - roots[w].Imaginari, 2) <= 0.01)
                         {
-                            known = true;
+                            isKnownRoot = true;
                             id = w;
                         }
                     }
-                    if (!known)
+                    if (!isKnownRoot)
                     {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1; 
+                        roots.Add(currentComplex);
+                        id = roots.Count;
+                        maxRootId = id + 1; 
                     }
 
                     // colorize pixel according to root number
-                    //int vv = id;
-                    //int vv = id * 50 + (int)it*5;
-                    var vv = clrs[id % clrs.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
-                    //vv = Math.Min(Math.Max(0, vv), 255);
-                    bmp.SetPixel(j, i, vv);
-                    //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
+                    //int color = id;
+                    //int color = id * 50 + (int)it*5;
+                    var color = colors[id % colors.Length];
+                    color = Color.FromArgb(color.R, color.G, color.B);
+                    color = Color.FromArgb(Math.Min(Math.Max(0, color.R-(int)iterations*2), 255), Math.Min(Math.Max(0, color.G - (int)iterations*2), 255), Math.Min(Math.Max(0, color.B - (int)iterations*2), 255));
+                    //color = Math.Min(Math.Max(0, color), 255);
+                    bitmapImage.SetPixel(j, i, color);
+                    //bmp.SetPixel(j, i, Color.FromArgb(color, color, color));
                 }
             }
 
@@ -148,7 +147,7 @@ namespace NNPTPZ1
             //    }
             //}
 
-                    bmp.Save(output ?? "../../../out.png");
+                    bitmapImage.Save(output ?? "../../../out.png");
             //Console.ReadKey();
         }
     }
