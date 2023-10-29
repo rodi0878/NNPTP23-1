@@ -57,7 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Mathematics\Complex.cs" />
-    <Compile Include="Mathematics\Extensions.cs" />
+    <Compile Include="Mathematics\Complex.Extensions.cs" />
     <Compile Include="Mathematics\Polynomial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
