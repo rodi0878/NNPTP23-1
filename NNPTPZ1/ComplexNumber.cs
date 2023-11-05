@@ -61,15 +61,18 @@ namespace NNPTPZ1
 
         public override string ToString() => $"({RealPart} + {ImaginaryPart}i)";
 
-        internal ComplexNumber Divide(ComplexNumber b)
+        internal ComplexNumber Divide(ComplexNumber complexNumber)
         {
-            var tmp = this.Multiply(new ComplexNumber() { RealPart = b.RealPart, ImaginaryPart = -b.ImaginaryPart });
-            var tmp2 = b.RealPart * b.RealPart + b.ImaginaryPart * b.ImaginaryPart;
+            ComplexNumber dividedNumber = this;
+            double divider = (complexNumber.RealPart * complexNumber.RealPart) + (complexNumber.ImaginaryPart * complexNumber.ImaginaryPart);
 
+            double realPartCalculated = ((dividedNumber.RealPart * complexNumber.RealPart) + (dividedNumber.ImaginaryPart * complexNumber.ImaginaryPart)) / divider;
+            double imaginaryPartCalculated = ((dividedNumber.ImaginaryPart * complexNumber.RealPart) - (dividedNumber.RealPart * complexNumber.ImaginaryPart)) / divider;
+            
             return new ComplexNumber()
             {
-                RealPart = tmp.RealPart / tmp2,
-                ImaginaryPart = (float)(tmp.ImaginaryPart / tmp2)
+                RealPart = realPartCalculated,
+                ImaginaryPart = imaginaryPartCalculated
             };
         }
     }

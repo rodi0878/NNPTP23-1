@@ -4,10 +4,6 @@ using System.Drawing;
 
 namespace NNPTPZ1
 {
-    /// <summary>
-    /// This program should produce Newton fractals.
-    /// See more at: https://en.wikipedia.org/wiki/Newton_fractal
-    /// </summary>
     class Program
     {
          static readonly Color[] colors = new Color[]
@@ -22,10 +18,11 @@ namespace NNPTPZ1
                 Color.Cyan,
                 Color.Magenta
             };
+        const int DefaultIterationCount = 30;   
 
         static int width;
         static int height;
-        static string output;
+        static string imagePath;
         static Bitmap bitmap;
         static double xMin;
         static double xMax;
@@ -46,27 +43,20 @@ namespace NNPTPZ1
             {
                 for (int y = 0; y < height; y++)
                 {
-                    // find "world" coordinates of pixel
-                    ComplexNumber ox = FindCoordinates(xMin, yMin, xStep, yStep, x, y);
-
-                    // find solution of equation using newton'startingComplexNumber iteration
-                    float it = CalculationOfNewtonIteration(polynomial, derivedPolynomial, ref ox);
-
-                    // find solution root number
-                    int id = FindRootSolution(roots, ox);
-
-                    // colorize pixel according to root number
-                    ColorizePixel(bitmap, x, y, it, id);
+                    ComplexNumber coordinates = FindCoordinates(x, y);
+                    int iteration = CalculationOfNewtonIteration(polynomial, derivedPolynomial, ref coordinates);
+                    int rootId = FindRootSolution(roots, coordinates);
+                    ColorizePixel(x, y, iteration, rootId);
                 }
             }
-            bitmap.Save(output ?? "../../../out.png");
+            bitmap.Save(imagePath ?? "../../../out.png");
         }
 
         private static void VariablesInitialization(string[] args)
         {
             width = int.Parse(args[0]);
             height = int.Parse(args[1]);
-            output = args[6];
+            imagePath = args[6];
             bitmap = new Bitmap(width, height);
             xMin = double.Parse(args[2]);
             xMax = double.Parse(args[3]);
@@ -86,7 +76,7 @@ namespace NNPTPZ1
             return polynomial;
         }
 
-        private static ComplexNumber FindCoordinates(double xMin, double yMin, double xStep, double yStep, int y, int x)
+        private static ComplexNumber FindCoordinates(int x, int y)
         {
             double xPart = xMin + x * xStep;
             double yPart = yMin + y * yStep;
@@ -126,20 +116,20 @@ namespace NNPTPZ1
             return rootId;
         }
 
-        private static void ColorizePixel(Bitmap bitmap, int x, int y, float it, int rootId)
+        private static void ColorizePixel(int x, int y, int iterationNumber, int rootId)
         {
             Color selectedColor = colors[rootId % colors.Length];
             selectedColor = Color.FromArgb(selectedColor.R, selectedColor.G, selectedColor.B);
-            selectedColor = Color.FromArgb(Math.Min(Math.Max(0, selectedColor.R - (int)it * 2), 255),
-                                           Math.Min(Math.Max(0, selectedColor.G - (int)it * 2), 255),
-                                           Math.Min(Math.Max(0, selectedColor.B - (int)it * 2), 255));
+            selectedColor = Color.FromArgb(Math.Min(Math.Max(0, selectedColor.R - iterationNumber * 2), 255),
+                                           Math.Min(Math.Max(0, selectedColor.G - iterationNumber * 2), 255),
+                                           Math.Min(Math.Max(0, selectedColor.B - iterationNumber * 2), 255));
             bitmap.SetPixel(x, y, selectedColor);
         }
 
         private static int CalculationOfNewtonIteration(Polynomial polynomial, Polynomial derivedPolynomial, ref ComplexNumber root)
         {
             int iteration = 0;
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < DefaultIterationCount; i++)
             {
                 ComplexNumber difference = polynomial.Eval(root).Divide(derivedPolynomial.Eval(root));
                 root = root.Subtract(difference);
