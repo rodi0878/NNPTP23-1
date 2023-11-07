@@ -36,6 +36,8 @@ namespace NNPTPZ1
         private static double xStep;
         private static double yStep;
 
+        private static int maxRootId = 0;
+
         private static List<Cplx> roots = new List<Cplx>();
 
         private static Color[] colors = new Color[]
@@ -53,7 +55,7 @@ namespace NNPTPZ1
             Console.WriteLine(polynomial);
             Console.WriteLine(polynomialDerivative);
 
-            ComputeAndColorizePixels(polynomial, polynomialDerivative);
+            CalculateAndColorizePixels(polynomial, polynomialDerivative);
 
             // TODO: delete I suppose...
             //for (int i = 0; i < 300; i++)
@@ -118,80 +120,100 @@ namespace NNPTPZ1
             return polynomial;
         }
 
-        static void ComputeAndColorizePixels(Poly polynomial, Poly polynomialDerivative)
+        static void CalculateAndColorizePixels(Poly polynomial, Poly polynomialDerivative)
         {
-            var maxRootId = 0;
+            var computedRoots = new Dictionary<Cplx, int>();
 
-            // TODO: cleanup!!!
-            // for every pixel in image...
             for (int i = 0; i < intArguments[0]; i++)
             {
                 for (int j = 0; j < intArguments[1]; j++)
                 {
-                    // find "world" coordinates of pixel
-                    double currentY = minY + i * yStep;
-                    double currentX = minX + j * xStep;
+                    Cplx currentComplex = CalculateWorldCoordinates(i, j);
+                    float iterations = NewtonIteration(polynomial, polynomialDerivative, currentComplex);
 
-                    Cplx currentComplex = new Cplx()
-                    {
-                        Re = currentX,
-                        Imaginari = (float)(currentY)
-                    };
+                    int rootId = FindRootNumber(currentComplex);
 
-                    if (currentComplex.Re == 0)
-                        currentComplex.Re = 0.0001;
-                    if (currentComplex.Imaginari == 0)
-                        currentComplex.Imaginari = 0.0001f;
-
-                    //Console.WriteLine(currentComplex);
-
-                    // find solution of equation using newton's iteration
-                    float iterations = 0;
-                    for (int q = 0; q < 30; q++)
-                    {
-                        var difference = polynomial.Eval(currentComplex).Divide(polynomialDerivative.Eval(currentComplex));
-                        currentComplex = currentComplex.Subtract(difference);
-
-                        //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(difference.Re, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        iterations++;
-                    }
-
-                    //Console.ReadKey();
-
-                    // find solution root number
-                    var isKnownRoot = false;
-                    var id = 0;
-                    for (int w = 0; w < roots.Count; w++)
-                    {
-                        if (Math.Pow(currentComplex.Re - roots[w].Re, 2) + Math.Pow(currentComplex.Imaginari - roots[w].Imaginari, 2) <= 0.01)
-                        {
-                            isKnownRoot = true;
-                            id = w;
-                        }
-                    }
-                    if (!isKnownRoot)
-                    {
-                        roots.Add(currentComplex);
-                        id = roots.Count;
-                        maxRootId = id + 1;
-                    }
-
-                    // colorize pixel according to root number
-                    //int color = id;
-                    //int color = id * 50 + (int)it*5;
-                    var color = colors[id % colors.Length];
-                    color = Color.FromArgb(color.R, color.G, color.B);
-                    color = Color.FromArgb(Math.Min(Math.Max(0, color.R - (int)iterations * 2), 255), Math.Min(Math.Max(0, color.G - (int)iterations * 2), 255), Math.Min(Math.Max(0, color.B - (int)iterations * 2), 255));
-                    //color = Math.Min(Math.Max(0, color), 255);
-                    bitmapImage.SetPixel(j, i, color);
-                    //bmp.SetPixel(j, i, Color.FromArgb(color, color, color));
+                    Color color = ColorizePixel(rootId, (int)iterations);
+                    SetPixelColor(j, i, color);
                 }
             }
         }
+
+        static Cplx CalculateWorldCoordinates(int i, int j)
+        {
+            double currentY = minY + i * yStep;
+            double currentX = minX + j * xStep;
+            return new Cplx()
+            {
+                Re = currentX,
+                Imaginari = (float)currentY
+            };
+        }
+
+        static float NewtonIteration(Poly polynomial, Poly polynomialDerivative, Cplx currentComplex)
+        {
+            float iterations = 0;
+            for (int q = 0; q < 30; q++)
+            {
+                var difference = polynomial.Eval(currentComplex).Divide(polynomialDerivative.Eval(currentComplex));
+                currentComplex = currentComplex.Subtract(difference);
+                if (IsConverged(difference))
+                {
+                    q--;
+                }
+                iterations++;
+            }
+            return iterations;
+        }
+
+        static bool IsConverged(Cplx difference)
+        {
+            return Math.Pow(difference.Re, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5;
+        }
+
+   
+
+        static int FindRootNumber(Cplx currentComplex)
+        {
+            Boolean isKnownRoot = false;
+            int rootId = 0;
+            for (int w = 0; w < roots.Count; w++)
+            {
+                if (IsCloseToRoot(currentComplex, roots[w]))
+                {
+                    isKnownRoot = true;
+                    rootId = w;
+                }
+            }
+            if (!isKnownRoot)
+            {
+                roots.Add(currentComplex);
+                rootId = roots.Count;
+                maxRootId = rootId + 1;
+            }
+            return rootId;
+        }
+
+        static bool IsCloseToRoot(Cplx currentComplex, Cplx root)
+        {
+            return Math.Pow(currentComplex.Re - root.Re, 2) + Math.Pow(currentComplex.Imaginari - root.Imaginari, 2) <= 0.01;
+        }
+
+        static Color ColorizePixel(int id, int iterations)
+        {
+            var color = colors[id % colors.Length];
+            color = Color.FromArgb(color.R, color.G, color.B);
+            color = Color.FromArgb(Math.Min(Math.Max(0, color.R - iterations * 2), 255), Math.Min(Math.Max(0, color.G - iterations * 2), 255), Math.Min(Math.Max(0, color.B - iterations * 2), 255));
+            return color;
+        }
+
+        static void SetPixelColor(int i, int j, Color color)
+        {
+            bitmapImage.SetPixel(j, i, color);
+        }
+
+
+
         static void SaveImage(Bitmap bitmapImage, string output)
         {
             // TODO: delete I suppose...
