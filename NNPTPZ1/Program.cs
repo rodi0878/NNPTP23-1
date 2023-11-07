@@ -149,15 +149,9 @@ namespace NNPTPZ1
 
         static void Initialization(string[] args)
         {
-            for (int i = 0; i < intArguments.Length; i++)
-            {
-                intArguments[i] = int.Parse(args[i]);
-            }
 
-            for (int i = 0; i < doubleArguments.Length; i++)
-            {
-                doubleArguments[i] = double.Parse(args[i + 2]);
-            }
+            intArguments = ParseIntArguments(args);
+            doubleArguments = ParseDoubleArguments(args);
             output = args[6];
 
             // TODO: add parameters from args?
@@ -169,6 +163,24 @@ namespace NNPTPZ1
 
             xStep = (maxX - minX) / intArguments[0];
             yStep = (maxY - minY) / intArguments[1];
+        }
+
+        static int[] ParseIntArguments(string[] args)
+        {
+            for (int i = 0; i < intArguments.Length; i++)
+            {
+                intArguments[i] = int.Parse(args[i]);
+            }
+            return intArguments;
+        }
+
+        static double[] ParseDoubleArguments(string[] args)
+        {
+            for (int i = 0; i < doubleArguments.Length; i++)
+            {
+                doubleArguments[i] = double.Parse(args[i + 2]);
+            }
+            return doubleArguments;
         }
     }
 
