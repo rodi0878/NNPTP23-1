@@ -47,14 +47,7 @@ namespace NNPTPZ1
         {
             Initialization(args);
 
-            roots = new List<Cplx>();
-            // TODO: poly should be parameterised?
-            Poly polynomial = new Poly();
-            polynomial.Coe.Add(new Cplx() { Re = 1 });
-            polynomial.Coe.Add(Cplx.Zero);
-            polynomial.Coe.Add(Cplx.Zero);
-            //polynomial.Coe.Add(Cplx.Zero);
-            polynomial.Coe.Add(new Cplx() { Re = 1 });
+            Poly polynomial = CreatePolynomial();
             Poly polynomialDerivative = polynomial.Derive();
 
             Console.WriteLine(polynomial);
@@ -181,6 +174,18 @@ namespace NNPTPZ1
                 doubleArguments[i] = double.Parse(args[i + 2]);
             }
             return doubleArguments;
+        }
+
+        static Poly CreatePolynomial()
+        {
+            // TODO: poly should be parameterised?
+            Poly polynomial = new Poly();
+            polynomial.Coe.Add(new Cplx() { Re = 1 });
+            polynomial.Coe.Add(Cplx.Zero);
+            polynomial.Coe.Add(Cplx.Zero);
+            //polynomial.Coe.Add(Cplx.Zero);
+            polynomial.Coe.Add(new Cplx() { Re = 1 });
+            return polynomial;
         }
     }
 
