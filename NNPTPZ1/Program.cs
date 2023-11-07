@@ -66,7 +66,7 @@ namespace NNPTPZ1
             //    }
             //}
 
-            bitmapImage.Save(output ?? "../../../out.png");
+            SaveImage(bitmapImage, output);
             //Console.ReadKey();
         }
 
@@ -191,6 +191,20 @@ namespace NNPTPZ1
                     //bmp.SetPixel(j, i, Color.FromArgb(color, color, color));
                 }
             }
+        }
+        static void SaveImage(Bitmap bitmapImage, string output)
+        {
+            // TODO: delete I suppose...
+            //for (int i = 0; i < 300; i++)
+            //{
+            //    for (int j = 0; j < 300; j++)
+            //    {
+            //        Color c = bmp.GetPixel(j, i);
+            //        int nv = (int)Math.Floor(c.R * (255.0 / maxid));
+            //        bitmapImage.SetPixel(j, i, Color.FromArgb(nv, nv, nv));
+            //    }
+            //}
+            bitmapImage.Save(output ?? "../../../out.png");
         }
     }
 
