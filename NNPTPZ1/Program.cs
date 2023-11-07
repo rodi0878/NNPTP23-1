@@ -45,26 +45,7 @@ namespace NNPTPZ1
 
         static void Main(string[] args)
         {
-            intArguments = new int[2];
-            for (int i = 0; i < intArguments.Length; i++)
-            {
-                intArguments[i] = int.Parse(args[i]);
-            }
-            doubleArguments = new double[4];
-            for (int i = 0; i < doubleArguments.Length; i++)
-            {
-                doubleArguments[i] = double.Parse(args[i + 2]);
-            }
-            output = args[6];
-            // TODO: add parameters from args?
-            bitmapImage = new Bitmap(intArguments[0], intArguments[1]);
-            minX = doubleArguments[0];
-            maxX = doubleArguments[1];
-            minY = doubleArguments[2];
-            maxY = doubleArguments[3];
-
-            xStep = (maxX - minX) / intArguments[0];
-            yStep = (maxY - minY) / intArguments[1];
+            Initialization(args);
 
             roots = new List<Cplx>();
             // TODO: poly should be parameterised?
@@ -164,6 +145,30 @@ namespace NNPTPZ1
 
             bitmapImage.Save(output ?? "../../../out.png");
             //Console.ReadKey();
+        }
+
+        static void Initialization(string[] args)
+        {
+            for (int i = 0; i < intArguments.Length; i++)
+            {
+                intArguments[i] = int.Parse(args[i]);
+            }
+
+            for (int i = 0; i < doubleArguments.Length; i++)
+            {
+                doubleArguments[i] = double.Parse(args[i + 2]);
+            }
+            output = args[6];
+
+            // TODO: add parameters from args?
+            bitmapImage = new Bitmap(intArguments[0], intArguments[1]);
+            minX = doubleArguments[0];
+            maxX = doubleArguments[1];
+            minY = doubleArguments[2];
+            maxY = doubleArguments[3];
+
+            xStep = (maxX - minX) / intArguments[0];
+            yStep = (maxY - minY) / intArguments[1];
         }
     }
 
