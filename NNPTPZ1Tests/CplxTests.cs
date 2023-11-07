@@ -65,7 +65,7 @@ namespace NNPTPZ1.Mathematics.Tests
         [TestMethod()]
         public void AddTestPolynome()
         {
-            Polynomial poly = new Mathematics.Polynomial();
+            Polynomial poly = new Polynomial();
             poly.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
             poly.Coefficients.Add(new ComplexNumber() { Real = 0, Imaginary = 0 });
             poly.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
