@@ -53,77 +53,7 @@ namespace NNPTPZ1
             Console.WriteLine(polynomial);
             Console.WriteLine(polynomialDerivative);
 
-            var maxRootId = 0;
-
-            // TODO: cleanup!!!
-            // for every pixel in image...
-            for (int i = 0; i < intArguments[0]; i++)
-            {
-                for (int j = 0; j < intArguments[1]; j++)
-                {
-                    // find "world" coordinates of pixel
-                    double currentY = minY + i * yStep;
-                    double currentX = minX + j * xStep;
-
-                    Cplx currentComplex = new Cplx()
-                    {
-                        Re = currentX,
-                        Imaginari = (float)(currentY)
-                    };
-
-                    if (currentComplex.Re == 0)
-                        currentComplex.Re = 0.0001;
-                    if (currentComplex.Imaginari == 0)
-                        currentComplex.Imaginari = 0.0001f;
-
-                    //Console.WriteLine(currentComplex);
-
-                    // find solution of equation using newton's iteration
-                    float iterations = 0;
-                    for (int q = 0; q< 30; q++)
-                    {
-                        var difference = polynomial.Eval(currentComplex).Divide(polynomialDerivative.Eval(currentComplex));
-                        currentComplex = currentComplex.Subtract(difference);
-
-                        //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(difference.Re, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        iterations++;
-                    }
-
-                    //Console.ReadKey();
-
-                    // find solution root number
-                    var isKnownRoot = false;
-                    var id = 0;
-                    for (int w = 0; w <roots.Count;w++)
-                    {
-                        if (Math.Pow(currentComplex.Re- roots[w].Re, 2) + Math.Pow(currentComplex.Imaginari - roots[w].Imaginari, 2) <= 0.01)
-                        {
-                            isKnownRoot = true;
-                            id = w;
-                        }
-                    }
-                    if (!isKnownRoot)
-                    {
-                        roots.Add(currentComplex);
-                        id = roots.Count;
-                        maxRootId = id + 1; 
-                    }
-
-                    // colorize pixel according to root number
-                    //int color = id;
-                    //int color = id * 50 + (int)it*5;
-                    var color = colors[id % colors.Length];
-                    color = Color.FromArgb(color.R, color.G, color.B);
-                    color = Color.FromArgb(Math.Min(Math.Max(0, color.R-(int)iterations*2), 255), Math.Min(Math.Max(0, color.G - (int)iterations*2), 255), Math.Min(Math.Max(0, color.B - (int)iterations*2), 255));
-                    //color = Math.Min(Math.Max(0, color), 255);
-                    bitmapImage.SetPixel(j, i, color);
-                    //bmp.SetPixel(j, i, Color.FromArgb(color, color, color));
-                }
-            }
+            ComputeAndColorizePixels(polynomial, polynomialDerivative);
 
             // TODO: delete I suppose...
             //for (int i = 0; i < 300; i++)
@@ -186,6 +116,81 @@ namespace NNPTPZ1
             //polynomial.Coe.Add(Cplx.Zero);
             polynomial.Coe.Add(new Cplx() { Re = 1 });
             return polynomial;
+        }
+
+        static void ComputeAndColorizePixels(Poly polynomial, Poly polynomialDerivative)
+        {
+            var maxRootId = 0;
+
+            // TODO: cleanup!!!
+            // for every pixel in image...
+            for (int i = 0; i < intArguments[0]; i++)
+            {
+                for (int j = 0; j < intArguments[1]; j++)
+                {
+                    // find "world" coordinates of pixel
+                    double currentY = minY + i * yStep;
+                    double currentX = minX + j * xStep;
+
+                    Cplx currentComplex = new Cplx()
+                    {
+                        Re = currentX,
+                        Imaginari = (float)(currentY)
+                    };
+
+                    if (currentComplex.Re == 0)
+                        currentComplex.Re = 0.0001;
+                    if (currentComplex.Imaginari == 0)
+                        currentComplex.Imaginari = 0.0001f;
+
+                    //Console.WriteLine(currentComplex);
+
+                    // find solution of equation using newton's iteration
+                    float iterations = 0;
+                    for (int q = 0; q < 30; q++)
+                    {
+                        var difference = polynomial.Eval(currentComplex).Divide(polynomialDerivative.Eval(currentComplex));
+                        currentComplex = currentComplex.Subtract(difference);
+
+                        //Console.WriteLine($"{q} {ox} -({diff})");
+                        if (Math.Pow(difference.Re, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5)
+                        {
+                            q--;
+                        }
+                        iterations++;
+                    }
+
+                    //Console.ReadKey();
+
+                    // find solution root number
+                    var isKnownRoot = false;
+                    var id = 0;
+                    for (int w = 0; w < roots.Count; w++)
+                    {
+                        if (Math.Pow(currentComplex.Re - roots[w].Re, 2) + Math.Pow(currentComplex.Imaginari - roots[w].Imaginari, 2) <= 0.01)
+                        {
+                            isKnownRoot = true;
+                            id = w;
+                        }
+                    }
+                    if (!isKnownRoot)
+                    {
+                        roots.Add(currentComplex);
+                        id = roots.Count;
+                        maxRootId = id + 1;
+                    }
+
+                    // colorize pixel according to root number
+                    //int color = id;
+                    //int color = id * 50 + (int)it*5;
+                    var color = colors[id % colors.Length];
+                    color = Color.FromArgb(color.R, color.G, color.B);
+                    color = Color.FromArgb(Math.Min(Math.Max(0, color.R - (int)iterations * 2), 255), Math.Min(Math.Max(0, color.G - (int)iterations * 2), 255), Math.Min(Math.Max(0, color.B - (int)iterations * 2), 255));
+                    //color = Math.Min(Math.Max(0, color), 255);
+                    bitmapImage.SetPixel(j, i, color);
+                    //bmp.SetPixel(j, i, Color.FromArgb(color, color, color));
+                }
+            }
         }
     }
 
