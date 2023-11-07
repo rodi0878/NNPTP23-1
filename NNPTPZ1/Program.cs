@@ -23,30 +23,50 @@ namespace NNPTPZ1
     /// </summary>
     class Program
     {
+        private static int[] intArguments = new int[2];
+        private static double[] doubleArguments = new double[4];
+        private static string output;
+
+        private static Bitmap bitmapImage;
+        private static double minX;
+        private static double maxX;
+        private static double minY;
+        private static double maxY;
+
+        private static double xStep;
+        private static double yStep;
+
+        private static List<Cplx> roots = new List<Cplx>();
+
+        private static Color[] colors = new Color[]
+            {
+                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+            };
+
         static void Main(string[] args)
         {
-            int[] intArguments = new int[2];
+            intArguments = new int[2];
             for (int i = 0; i < intArguments.Length; i++)
             {
                 intArguments[i] = int.Parse(args[i]);
             }
-            double[] doubleArguments = new double[4];
+            doubleArguments = new double[4];
             for (int i = 0; i < doubleArguments.Length; i++)
             {
                 doubleArguments[i] = double.Parse(args[i + 2]);
             }
-            string output = args[6];
+            output = args[6];
             // TODO: add parameters from args?
-            Bitmap bitmapImage = new Bitmap(intArguments[0], intArguments[1]);
-            double xmin = doubleArguments[0];
-            double xmax = doubleArguments[1];
-            double ymin = doubleArguments[2];
-            double ymax = doubleArguments[3];
+            bitmapImage = new Bitmap(intArguments[0], intArguments[1]);
+            minX = doubleArguments[0];
+            maxX = doubleArguments[1];
+            minY = doubleArguments[2];
+            maxY = doubleArguments[3];
 
-            double xstep = (xmax - xmin) / intArguments[0];
-            double ystep = (ymax - ymin) / intArguments[1];
+            xStep = (maxX - minX) / intArguments[0];
+            yStep = (maxY - minY) / intArguments[1];
 
-            List<Cplx> roots = new List<Cplx>();
+            roots = new List<Cplx>();
             // TODO: poly should be parameterised?
             Poly polynomial = new Poly();
             polynomial.Coe.Add(new Cplx() { Re = 1 });
@@ -59,11 +79,6 @@ namespace NNPTPZ1
             Console.WriteLine(polynomial);
             Console.WriteLine(polynomialDerivative);
 
-            var colors = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
-
             var maxRootId = 0;
 
             // TODO: cleanup!!!
@@ -73,8 +88,8 @@ namespace NNPTPZ1
                 for (int j = 0; j < intArguments[1]; j++)
                 {
                     // find "world" coordinates of pixel
-                    double currentY = ymin + i * ystep;
-                    double currentX = xmin + j * xstep;
+                    double currentY = minY + i * yStep;
+                    double currentX = minX + j * xStep;
 
                     Cplx currentComplex = new Cplx()
                     {
@@ -87,7 +102,7 @@ namespace NNPTPZ1
                     if (currentComplex.Imaginari == 0)
                         currentComplex.Imaginari = 0.0001f;
 
-                    //Console.WriteLine(ox);
+                    //Console.WriteLine(currentComplex);
 
                     // find solution of equation using newton's iteration
                     float iterations = 0;
@@ -141,13 +156,13 @@ namespace NNPTPZ1
             //{
             //    for (int j = 0; j < 300; j++)
             //    {
-            //        Color c = bmp.GetPixel(j, i);
-            //        int nv = (int)Math.Floor(c.R * (255.0 / maxid));
-            //        bmp.SetPixel(j, i, Color.FromArgb(nv, nv, nv));
+            //        Color color = bitmapImage.GetPixel(j, i);
+            //        int normalizedValue = (int)Math.Floor(color.R * (255.0 / maxRootId));
+            //        bitmapImage.SetPixel(j, i, Color.FromArgb(normalizedValue, nvnormalizedValue, normalizedValue));
             //    }
             //}
 
-                    bitmapImage.Save(output ?? "../../../out.png");
+            bitmapImage.Save(output ?? "../../../out.png");
             //Console.ReadKey();
         }
     }
