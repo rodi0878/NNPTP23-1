@@ -7,12 +7,12 @@ namespace Mathematics
         public double RealPart { get; set; }
         public float ImaginariPart { get; set; }
 
+        public readonly static ComplexNumber Zero = new ComplexNumber { RealPart = 0, ImaginariPart = 0 };
+
         public override bool Equals(object obj)
         {
             return obj is ComplexNumber x && x.RealPart == RealPart && x.ImaginariPart == ImaginariPart;
         }
-
-        public readonly static ComplexNumber Zero = new ComplexNumber { RealPart = 0, ImaginariPart = 0 };
 
         public ComplexNumber Multiply(ComplexNumber b)
         {
@@ -35,7 +35,7 @@ namespace Mathematics
                 ImaginariPart = ImaginariPart + b.ImaginariPart
             };
         }
-        public double GetAngleInDegrees()
+        public double GetAngleInRadians()
         {
             return Math.Atan(ImaginariPart / RealPart);
         }

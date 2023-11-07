@@ -18,6 +18,10 @@ namespace NNPTPZ1
         public double XStep { get; set; }
         public double YStep { get; set; }
         public List<ComplexNumber> Roots { get; set; } = new List<ComplexNumber>();
+        public static Color[] Colors { get; } = new Color[]
+        {
+            Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+        };
         public Render(string[] args)
         {
             Width = int.Parse(args[0]);
@@ -34,12 +38,7 @@ namespace NNPTPZ1
             YStep = (YMax - YMin) / Height;
         }
 
-        public static Color[] Colors { get; } = new Color[]
-        {
-            Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-        };
-
-        public void renderPicture(Polynome polynome, Polynome derivatedPolynome)
+        public void RenderPicture(Polynome polynome, Polynome derivatedPolynome)
         {
             for (int i = 0; i < Width; i++)
             {
@@ -68,9 +67,9 @@ namespace NNPTPZ1
             return new ComplexNumber { RealPart = realPart, ImaginariPart = imagPart };
         }
 
-        private float FindSolutionOfEquation(ref ComplexNumber complexNumber, Polynome polynome, Polynome derivatedPolynome)
+        private int FindSolutionOfEquation(ref ComplexNumber complexNumber, Polynome polynome, Polynome derivatedPolynome)
         {
-            float iteration = 0;
+            int iteration = 0;
             ComplexNumber localComplex = new ComplexNumber { RealPart = complexNumber.RealPart, ImaginariPart = complexNumber.ImaginariPart };
             for (int i = 0; i < 30; i++)
             {

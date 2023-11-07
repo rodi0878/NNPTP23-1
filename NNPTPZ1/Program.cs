@@ -19,7 +19,7 @@ namespace NNPTPZ1
             Console.WriteLine(polynome);
             Console.WriteLine(derivatedPolynome);
 
-            render.renderPicture(polynome, derivatedPolynome);
+            render.RenderPicture(polynome, derivatedPolynome);
         }
     }
 }
