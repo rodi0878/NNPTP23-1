@@ -119,7 +119,6 @@ namespace NNPTPZ1
         private static void ColorizePixel(int x, int y, int iterationNumber, int rootId)
         {
             Color selectedColor = colors[rootId % colors.Length];
-            selectedColor = Color.FromArgb(selectedColor.R, selectedColor.G, selectedColor.B);
             selectedColor = Color.FromArgb(Math.Min(Math.Max(0, selectedColor.R - iterationNumber * 2), 255),
                                            Math.Min(Math.Max(0, selectedColor.G - iterationNumber * 2), 255),
                                            Math.Min(Math.Max(0, selectedColor.B - iterationNumber * 2), 255));
