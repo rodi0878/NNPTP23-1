@@ -22,6 +22,7 @@ namespace NNPTPZ1
         public void Add(ComplexNumber coefficient) =>
             Coefficients.Add(coefficient);
 
+
         /// <summary>
         /// Derives this polynomial and creates new one
         /// </summary>
