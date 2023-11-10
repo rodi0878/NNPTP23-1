@@ -10,7 +10,7 @@ using NNPTPZ1;
 namespace NNPTPZ1.Mathematics.Tests
 {
     [TestClass()]
-    public class CplxTests
+    public class ComplexNumberTest
     {
 
         [TestMethod()]
@@ -36,12 +36,12 @@ namespace NNPTPZ1.Mathematics.Tests
 
             Assert.AreEqual(shouldBe, actual);
 
-            var e2 = "(10 + 20i)";
-            var r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
-            e2 = "(1 + 2i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
+            var expected = "(10 + 20i)";
+            var result = a.ToString();
+            Assert.AreEqual(expected, result);
+            expected = "(1 + 2i)";
+            result = b.ToString();
+            Assert.AreEqual(expected, result);
 
             a = new ComplexNumber()
             {
@@ -53,35 +53,35 @@ namespace NNPTPZ1.Mathematics.Tests
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
-            e2 = "(1 + -1i)";
-            r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
+            expected = "(1 + -1i)";
+            result = a.ToString();
+            Assert.AreEqual(expected, result);
 
-            e2 = "(0 + 0i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
+            expected = "(0 + 0i)";
+            result = b.ToString();
+            Assert.AreEqual(expected, result);
         }
 
         [TestMethod()]
         public void AddTestPolynome()
         {
-            Polynomial poly = new Polynomial();
-            poly.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
-            poly.Coefficients.Add(new ComplexNumber() { Real = 0, Imaginary = 0 });
-            poly.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
-            ComplexNumber result = poly.Evaluate(new ComplexNumber() { Real = 0, Imaginary = 0 });
+            Polynomial polygon = new Polynomial();
+            polygon.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            polygon.Coefficients.Add(new ComplexNumber() { Real = 0, Imaginary = 0 });
+            polygon.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            ComplexNumber result = polygon.Evaluate(new ComplexNumber() { Real = 0, Imaginary = 0 });
             var expected = new ComplexNumber() { Real = 1, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Evaluate(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            result = polygon.Evaluate(new ComplexNumber() { Real = 1, Imaginary = 0 });
             expected = new ComplexNumber() { Real = 2, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Evaluate(new ComplexNumber() { Real = 2, Imaginary = 0 });
+            result = polygon.Evaluate(new ComplexNumber() { Real = 2, Imaginary = 0 });
             expected = new ComplexNumber() { Real = 5.0000000000, Imaginary = 0 };
             Assert.AreEqual(expected, result);
 
-            var r2 = poly.ToString();
-            var e2 = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
-            Assert.AreEqual(e2, r2);
+            var secondResult = polygon.ToString();
+            var secondExpected = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
+            Assert.AreEqual(secondExpected, secondResult);
         }
     }
 }
