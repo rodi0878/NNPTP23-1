@@ -1,11 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NNPTPZ1.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NNPTPZ1;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
