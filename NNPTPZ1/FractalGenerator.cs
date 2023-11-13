@@ -72,7 +72,7 @@ namespace NNPTPZ1
                 for (int j = 0; j < intArguments[1]; j++)
                 {
                     ComplexNumber currentComplex = CalculateWorldCoordinates(i, j);
-                    float iterations = NewtonIteration(polynomial, polynomialDerivative, currentComplex);
+                    int iterations = NewtonIteration(polynomial, polynomialDerivative, currentComplex);
 
                     int rootId = FindRootNumber(currentComplex);
 
@@ -93,9 +93,9 @@ namespace NNPTPZ1
             };
         }
 
-        private float NewtonIteration(Polynomial polynomial, Polynomial polynomialDerivative, ComplexNumber currentComplex)
+        private int NewtonIteration(Polynomial polynomial, Polynomial polynomialDerivative, ComplexNumber currentComplex)
         {
-            float iterations = 0;
+            int iterations = 0;
             for (int q = 0; q < 30; q++)
             {
                 var difference = polynomial.Evaluate(currentComplex).Divide(polynomialDerivative.Evaluate(currentComplex));
