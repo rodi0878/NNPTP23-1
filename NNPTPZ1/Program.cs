@@ -91,65 +91,87 @@ namespace NNPTPZ1
         {
             // for every pixel in image...
             List<ComplexNumber> listOfRoots = new List<ComplexNumber>();
-            for (int i = 0; i < intargs[0]; i++)
+            for (int y = 0; y < intargs[0]; y++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int x = 0; x < intargs[1]; x++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
 
-                    ComplexNumber number = new ComplexNumber()
-                    {
-                        Real = x,
-                        Imaginary = (float)(y)
-                    };
+                    ComplexNumber number = CreateComplexNumber(y, x);
 
-                    if (number.Real == 0)
-                        number.Real = 0.0001;
-                    if (number.Imaginary == 0)
-                        number.Imaginary = 0.0001f;
+                    int iteration = FindSolutionByNewtonIteration(ref number);
 
+                    int rootNumber = FindRootNumber(listOfRoots, number);
 
-                    // find solution of equation using newton's iteration
-                    float iteration = 0;
-                    for (int q = 0; q < ITERATION_LIMIT; q++)
-                    {
-                        var difference = polynomial.Evaluate(number).Divide(polynomialDerive.Evaluate(number));
-                        number = number.Subtract(difference);
-
-                        if (Math.Pow(difference.Real, 2) + Math.Pow(difference.Imaginary, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        iteration++;
-                    }
-
-                    // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w < listOfRoots.Count; w++)
-                    {
-                        if (Math.Pow(number.Real - listOfRoots[w].Real, 2) + Math.Pow(number.Imaginary - listOfRoots[w].Imaginary, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        listOfRoots.Add(number);
-                        id = listOfRoots.Count;
-                    }
-
-                    // colorize pixel according to root number
-                    Color colour = colours[id % colours.Length];
-                    colour = Color.FromArgb(colour.R, colour.G, colour.B);
-                    colour = Color.FromArgb(Math.Min(Math.Max(0, colour.R - (int)iteration * 2), 255), Math.Min(Math.Max(0, colour.G - (int)iteration * 2), 255), Math.Min(Math.Max(0, colour.B - (int)iteration * 2), 255));
-                    bitmap.SetPixel(j, i, colour);
+                    ColourizePixelByRootNumber(y, x, iteration, rootNumber);
 
                 }
             }
+        }
+
+        private static int FindRootNumber(List<ComplexNumber> listOfRoots, ComplexNumber number)
+        {
+            int colourId = 0;
+            var known = false;
+            for (int i = 0; i < listOfRoots.Count; i++)
+            {
+                if (Math.Pow(number.Real - listOfRoots[i].Real, 2) + Math.Pow(number.Imaginary - listOfRoots[i].Imaginary, 2) <= 0.01)
+                {
+                    known = true;
+                    colourId = i;
+                }
+            }
+            if (!known)
+            {
+                listOfRoots.Add(number);
+                colourId = listOfRoots.Count;
+            }
+
+            return colourId;
+        }
+
+        private static int FindSolutionByNewtonIteration(ref ComplexNumber number)
+        {
+            int iteration = 0;
+            for (int i = 0; i < ITERATION_LIMIT; i++)
+            {
+                var difference = polynomial.Evaluate(number).Divide(polynomialDerive.Evaluate(number));
+                number = number.Subtract(difference);
+
+                if (Math.Pow(difference.Real, 2) + Math.Pow(difference.Imaginary, 2) >= 0.5)
+                {
+                    i--;
+                }
+                iteration++;
+            }
+            return iteration;
+        }
+
+        private static ComplexNumber CreateComplexNumber(int inputY, int inputX)
+        {
+
+            double y = ymin + inputY * ystep;
+            double x = xmin + inputX * xstep;
+
+            ComplexNumber number = new ComplexNumber()
+            {
+                Real = x,
+                Imaginary = (float)(y)
+            };
+
+            if (number.Real == 0)
+                number.Real = 0.0001;
+            if (number.Imaginary == 0)
+                number.Imaginary = 0.0001f;
+
+            return number;
+        }
+
+        private static void ColourizePixelByRootNumber(int y, int x, int iteration, int rootNumber)
+        {
+            Color colour = colours[rootNumber % colours.Length];
+            colour = Color.FromArgb(colour.R, colour.G, colour.B);
+            colour = Color.FromArgb(Math.Min(Math.Max(0, colour.R - iteration * 2), 255), Math.Min(Math.Max(0, colour.G - iteration * 2), 255), Math.Min(Math.Max(0, colour.B - iteration * 2), 255));
+            bitmap.SetPixel(x, y, colour);
         }
 
         private static void SaveImage()
