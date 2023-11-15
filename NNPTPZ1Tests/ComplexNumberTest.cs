@@ -22,12 +22,12 @@ namespace NNPTPZ1.Mathematics.Tests
             numberTenTwenty = new ComplexNumber()
             {
                 Real = 10,
-                Imaginari = 20
+                Imaginary = 20
             };
             numberOneTwo = new ComplexNumber()
             {
                 Real = 1,
-                Imaginari = 2
+                Imaginary = 2
             };
         }
 
@@ -55,7 +55,7 @@ namespace NNPTPZ1.Mathematics.Tests
             ComplexNumber shouldBe = new ComplexNumber()
             {
                 Real = 11,
-                Imaginari = 22
+                Imaginary = 22
             };
 
             Assert.AreEqual(shouldBe, actual);

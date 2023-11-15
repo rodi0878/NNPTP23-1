@@ -67,13 +67,13 @@ namespace NNPTPZ1
                     ComplexNumber number = new ComplexNumber()
                     {
                         Real = x,
-                        Imaginari = (float)(y)
+                        Imaginary = (float)(y)
                     };
 
                     if (number.Real == 0)
                         number.Real = 0.0001;
-                    if (number.Imaginari == 0)
-                        number.Imaginari = 0.0001f;
+                    if (number.Imaginary == 0)
+                        number.Imaginary = 0.0001f;
 
 
                     // find solution of equation using newton's iteration
@@ -83,7 +83,7 @@ namespace NNPTPZ1
                         var difference = polynomial.Evaluate(number).Divide(polynomialDerive.Evaluate(number));
                         number = number.Subtract(difference);
 
-                        if (Math.Pow(difference.Real, 2) + Math.Pow(difference.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(difference.Real, 2) + Math.Pow(difference.Imaginary, 2) >= 0.5)
                         {
                             q--;
                         }
@@ -95,7 +95,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w < listOfRoots.Count; w++)
                     {
-                        if (Math.Pow(number.Real - listOfRoots[w].Real, 2) + Math.Pow(number.Imaginari - listOfRoots[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(number.Real - listOfRoots[w].Real, 2) + Math.Pow(number.Imaginary - listOfRoots[w].Imaginary, 2) <= 0.01)
                         {
                             known = true;
                             id = w;

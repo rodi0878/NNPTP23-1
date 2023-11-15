@@ -40,7 +40,7 @@ namespace NNPTPZ1.Mathematics
         /// <returns>evaluation</returns>
         public ComplexNumber Evaluate(double pointOfEvaluation)
         {
-            var evaluation = Evaluate(new ComplexNumber() { Real = pointOfEvaluation, Imaginari = 0 });
+            var evaluation = Evaluate(new ComplexNumber() { Real = pointOfEvaluation, Imaginary = 0 });
             return evaluation;
         }
 
