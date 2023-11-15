@@ -46,10 +46,45 @@ namespace NNPTPZ1
             CreateImage();
             SaveImage();
         }
-
-        private static void SaveImage()
+        
+        private static void LoadArguments(string[] args)
         {
-            bitmap.Save(output ?? "../../../out.png");
+            intargs = new int[2];
+            for (int i = 0; i < intargs.Length; i++)
+            {
+                intargs[i] = int.Parse(args[i]);
+            }
+            doubleargs = new double[4];
+            for (int i = 0; i < doubleargs.Length; i++)
+            {
+                doubleargs[i] = double.Parse(args[i + 2]);
+            }
+            output = args[6];
+        }
+
+        private static void Initialization()
+        {
+            bitmap = new Bitmap(intargs[0], intargs[1]);
+            xmin = doubleargs[0];
+            double xmax = doubleargs[1];
+            ymin = doubleargs[2];
+            double ymax = doubleargs[3];
+
+            xstep = (xmax - xmin) / intargs[0];
+            ystep = (ymax - ymin) / intargs[1];
+        }
+
+        private static void PrepareData()
+        {
+            polynomial = new Polynomial();
+            polynomial.ComplexNumbersList.Add(new ComplexNumber() { Real = 1 });
+            polynomial.ComplexNumbersList.Add(ComplexNumber.Zero);
+            polynomial.ComplexNumbersList.Add(ComplexNumber.Zero);
+            polynomial.ComplexNumbersList.Add(new ComplexNumber() { Real = 1 });
+            polynomialDerive = polynomial.Derive();
+
+            Console.WriteLine(polynomial);
+            Console.WriteLine(polynomialDerive);
         }
 
         private static void CreateImage()
@@ -117,44 +152,9 @@ namespace NNPTPZ1
             }
         }
 
-        private static void PrepareData()
+        private static void SaveImage()
         {
-            polynomial = new Polynomial();
-            polynomial.ComplexNumbersList.Add(new ComplexNumber() { Real = 1 });
-            polynomial.ComplexNumbersList.Add(ComplexNumber.Zero);
-            polynomial.ComplexNumbersList.Add(ComplexNumber.Zero);
-            polynomial.ComplexNumbersList.Add(new ComplexNumber() { Real = 1 });
-            polynomialDerive = polynomial.Derive();
-
-            Console.WriteLine(polynomial);
-            Console.WriteLine(polynomialDerive);
-        }
-
-        private static void Initialization()
-        {
-            bitmap = new Bitmap(intargs[0], intargs[1]);
-            xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            ymin = doubleargs[2];
-            double ymax = doubleargs[3];
-
-            xstep = (xmax - xmin) / intargs[0];
-            ystep = (ymax - ymin) / intargs[1];
-        }
-
-        private static void LoadArguments(string[] args)
-        {
-            intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
-            {
-                intargs[i] = int.Parse(args[i]);
-            }
-            doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
-            {
-                doubleargs[i] = double.Parse(args[i + 2]);
-            }
-            output = args[6];
+            bitmap.Save(output ?? "../../../out.png");
         }
     }
 }
