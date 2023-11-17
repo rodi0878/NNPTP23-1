@@ -81,8 +81,7 @@ namespace NNPTPZ1
                     resultedString += ComplexNumbers[i];
                     if (i > 0)
                     {
-                        int j = 0;
-                        for (; j < i; j++)
+                        for (int j = 0; j < i; j++)
                         {
                             resultedString += "x";
                         }

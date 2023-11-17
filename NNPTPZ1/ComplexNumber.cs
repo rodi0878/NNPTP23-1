@@ -10,6 +10,12 @@ namespace NNPTPZ1
             public double RealPart { get; set; }
             public float ImaginaryPart { get; set; }
 
+            public readonly static ComplexNumber Zero = new ComplexNumber()
+            {
+                RealPart = 0,
+                ImaginaryPart = 0
+            };
+
             public override bool Equals(object comparedObject)
             {
                 if (comparedObject is ComplexNumber)
@@ -19,12 +25,6 @@ namespace NNPTPZ1
                 }
                 return base.Equals(comparedObject);
             }
-
-            public readonly static ComplexNumber Zero = new ComplexNumber()
-            {
-                RealPart = 0,
-                ImaginaryPart = 0
-            };
 
             public ComplexNumber Multiply(ComplexNumber multiplier)
             {
@@ -56,6 +56,11 @@ namespace NNPTPZ1
                     RealPart = numerator.RealPart / denominator,
                     ImaginaryPart = (float)(numerator.ImaginaryPart / denominator)
                 };
+            }
+
+            public double GetAngleInRadians()
+            {
+                return Math.Atan(ImaginaryPart / RealPart);
             }
 
             public double GetAngleInDegrees()

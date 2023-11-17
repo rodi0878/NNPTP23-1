@@ -86,8 +86,7 @@ namespace NNPTPZ1
         private static void ColorizePixelAccordingToRootNumber(Bitmap resultedBitmap, int x, int y, int iterationNumber, int rootNumber)
         {
             var pixelColor = Colors[rootNumber % Colors.Length];
-            pixelColor = Color.FromArgb(pixelColor.R, pixelColor.G, pixelColor.B);
-            pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - (int)iterationNumber * 2), 255), Math.Min(Math.Max(0, pixelColor.G - iterationNumber * 2), 255), Math.Min(Math.Max(0, pixelColor.B - iterationNumber * 2), 255));
+            pixelColor = Color.FromArgb(Math.Min(Math.Max(0, pixelColor.R - iterationNumber * 2), 255), Math.Min(Math.Max(0, pixelColor.G - iterationNumber * 2), 255), Math.Min(Math.Max(0, pixelColor.B - iterationNumber * 2), 255));
             resultedBitmap.SetPixel(y, x, pixelColor);
         }
 
