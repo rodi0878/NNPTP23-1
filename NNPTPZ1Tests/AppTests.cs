@@ -91,11 +91,11 @@ namespace Mathematics.Tests
             ComplexNumber expected = new ComplexNumber() { RealNumber = 1, ImaginaryUnit = 0 };
             Assert.AreEqual(expected, result);
 
-            result = polynomial.Eval(new ComplexNumber() { RealNumber = 1, ImaginaryUnit = 0 });
+            result = polynomial.EvaluateAt(new ComplexNumber() { RealNumber = 1, ImaginaryUnit = 0 });
             expected = new ComplexNumber() { RealNumber = 2, ImaginaryUnit = 0 };
             Assert.AreEqual(expected, result);
 
-            result = polynomial.Eval(new ComplexNumber() { RealNumber = 2, ImaginaryUnit = 0 });
+            result = polynomial.EvaluateAt(new ComplexNumber() { RealNumber = 2, ImaginaryUnit = 0 });
             expected = new ComplexNumber() { RealNumber = 5.0000000000, ImaginaryUnit = 0 };
             Assert.AreEqual(expected, result);
 

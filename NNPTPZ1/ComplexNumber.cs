@@ -56,7 +56,7 @@ namespace Mathematics
             return Math.Sqrt(RealNumber * RealNumber + ImaginaryUnit * ImaginaryUnit);
         }
 
-        public double GetAngleInDegrees()
+        public double GetAngleInRadians()
         {
             return Math.Atan(ImaginaryUnit / RealNumber);
         }

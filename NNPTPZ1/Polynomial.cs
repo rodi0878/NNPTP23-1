@@ -46,7 +46,7 @@ namespace Mathematics
         /// <returns>y</returns>
         public ComplexNumber EvaluateAt(ComplexNumber complexNumber)
         {
-            ComplexNumber summary = ComplexNumber.Zero;
+            ComplexNumber evaluated = ComplexNumber.Zero;
             for (int power = 0; power < Coefficients.Count; power++)
             {
                 ComplexNumber coefficient = Coefficients[power];
@@ -59,9 +59,9 @@ namespace Mathematics
                     }
                     coefficient = coefficient.Multiply(poweredX);
                 }
-                summary = summary.Add(coefficient);
+                evaluated = evaluated.Add(coefficient);
             }
-            return summary;
+            return evaluated;
         }
 
         /// <summary>

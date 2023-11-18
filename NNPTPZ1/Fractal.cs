@@ -116,17 +116,17 @@ namespace App
 
         internal void FindSolutionForRoots()
         {
-            bool known = false;
+            bool knownRoot = false;
             for (int i = 0; i < roots.Count; i++)
             {
                 if (IsRootInTolerance(roots[i]))
                 {
-                    known = true;
+                    knownRoot = true;
                     position = i;
                     break;
                 }
             }
-            if (!known)
+            if (!knownRoot)
             {
                 roots.Add(complexNumber);
                 position = roots.Count;
@@ -145,7 +145,7 @@ namespace App
 
         internal void ColorizePixelAt(int i, int j)
         {
-            var color = COLORS[position % COLORS.Length];
+            Color color = COLORS[position % COLORS.Length];
             color = Color.FromArgb(CalculateColorPart(color.R), CalculateColorPart(color.G), CalculateColorPart(color.B));
             bitmap.SetPixel(j, i, color);
         }
