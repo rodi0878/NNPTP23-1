@@ -51,7 +51,7 @@ namespace Mathematics
             };
         }
 
-        public double GetAbsolute()
+        public double GetMagnitude()
         {
             return Math.Sqrt(RealNumber * RealNumber + ImaginaryUnit * ImaginaryUnit);
         }

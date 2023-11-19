@@ -11,14 +11,12 @@ namespace App
         internal readonly int NUMBER_OF_ITERATIONS = 30;
         internal readonly double DIFFERENCE_TOLERANCE = 0.5;
         internal readonly double ROOT_TOLERANCE = 0.01;
-        internal readonly Color[] COLORS = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta };
-        internal int iterations = 0, position = 0;
-        internal Polynomial polynomial, derivatedPolynomial;
-        internal ComplexNumber complexNumber;
+
         internal List<ComplexNumber> roots = new List<ComplexNumber>();
+        internal Polynomial polynomial, derivatedPolynomial;
+
         internal Bitmap bitmap;
-        internal int width, height;
-        internal double xmin, xmax, ymin, ymax, xstep, ystep;
+        internal double xmin, ymin, xstep, ystep;
         internal string outputPath;
         internal string[] args;
 
@@ -37,14 +35,15 @@ namespace App
 
         internal void InitializeParameters()
         {
-            width = int.Parse(args[0]);
-            height = int.Parse(args[1]);
+            int width = int.Parse(args[0]);
+            int height = int.Parse(args[1]);
+
             bitmap = new Bitmap(width, height);
 
             xmin = double.Parse(args[2]);
-            xmax = double.Parse(args[3]);
+            double xmax = double.Parse(args[3]);
             ymin = double.Parse(args[4]);
-            ymax = double.Parse(args[5]);
+            double ymax = double.Parse(args[5]);
             xstep = (xmax - xmin) / width;
             ystep = (ymax - ymin) / height;
 
@@ -70,43 +69,49 @@ namespace App
 
         internal void RenderPixels()
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < bitmap.Width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < bitmap.Height; j++)
                 {
-                    FindWorldCoordinationsOf(i, j);
-                    FindSolutionByNewtonIteration();
-                    FindSolutionForRoots();
-                    ColorizePixelAt(i, j);
+                    RenderPixelAt(i, j);
                 }
             }
         }
 
-        internal void FindWorldCoordinationsOf(int i, int j)
+        internal void RenderPixelAt(int i, int j)
+        {
+            ComplexNumber currentComplexNumber = FindWorldCoordinationsOf(i, j);
+            int iterations = FindSolutionByNewtonIteration(ref currentComplexNumber);
+            int position = FindSolutionForRoots(currentComplexNumber);
+            ColorizePixelAt(i, j, position, iterations);
+        }
+
+        internal ComplexNumber FindWorldCoordinationsOf(int i, int j)
         {
             double y = ymin + i * ystep;
             double x = xmin + j * xstep;
 
-            complexNumber = new ComplexNumber()
+            return new ComplexNumber()
             {
                 RealNumber = x,
                 ImaginaryUnit = y
             };
         }
 
-        internal void FindSolutionByNewtonIteration()
+        internal int FindSolutionByNewtonIteration(ref ComplexNumber currentComplexNumber)
         {
-            iterations = 0;
+            int iterations = 0;
             for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
             {
-                ComplexNumber difference = polynomial.EvaluateAt(complexNumber).Divide(derivatedPolynomial.EvaluateAt(complexNumber));
-                complexNumber = complexNumber.Subtract(difference);
+                ComplexNumber difference = polynomial.EvaluateAt(currentComplexNumber).Divide(derivatedPolynomial.EvaluateAt(currentComplexNumber));
+                currentComplexNumber = currentComplexNumber.Subtract(difference);
                 if (IsConverged(difference))
                 {
                     i--;
                 }
                 iterations++;
             }
+            return iterations;
         }
 
         internal bool IsConverged(ComplexNumber difference)
@@ -114,12 +119,13 @@ namespace App
             return Math.Pow(difference.RealNumber, 2) + Math.Pow(difference.ImaginaryUnit, 2) >= DIFFERENCE_TOLERANCE;
         }
 
-        internal void FindSolutionForRoots()
+        internal int FindSolutionForRoots(ComplexNumber currentComplexNumber)
         {
+            int position = 0;
             bool knownRoot = false;
             for (int i = 0; i < roots.Count; i++)
             {
-                if (IsRootInTolerance(roots[i]))
+                if (IsRootInTolerance(currentComplexNumber, roots[i]))
                 {
                     knownRoot = true;
                     position = i;
@@ -128,25 +134,27 @@ namespace App
             }
             if (!knownRoot)
             {
-                roots.Add(complexNumber);
+                roots.Add(currentComplexNumber);
                 position = roots.Count;
             }
+            return position;
         }
 
-        internal bool IsRootInTolerance(ComplexNumber root)
+        internal bool IsRootInTolerance(ComplexNumber currentComplexNumber, ComplexNumber root)
         {
-            return Math.Pow(complexNumber.RealNumber - root.RealNumber, 2) + Math.Pow(complexNumber.ImaginaryUnit - root.ImaginaryUnit, 2) <= ROOT_TOLERANCE;
+            return Math.Pow(currentComplexNumber.RealNumber - root.RealNumber, 2) + Math.Pow(currentComplexNumber.ImaginaryUnit - root.ImaginaryUnit, 2) <= ROOT_TOLERANCE;
         }
 
-        internal int CalculateColorPart(int colorPart)
+        internal int CalculateColorPart(int colorPart, int iterations)
         {
             return Math.Min(Math.Max(0, colorPart - iterations * 2), 255);
         }
 
-        internal void ColorizePixelAt(int i, int j)
+        internal void ColorizePixelAt(int i, int j, int position, int iterations)
         {
-            Color color = COLORS[position % COLORS.Length];
-            color = Color.FromArgb(CalculateColorPart(color.R), CalculateColorPart(color.G), CalculateColorPart(color.B));
+            Color[] colors = new Color[] { Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta };
+            Color color = colors[position % colors.Length];
+            color = Color.FromArgb(CalculateColorPart(color.R, iterations), CalculateColorPart(color.G, iterations), CalculateColorPart(color.B, iterations));
             bitmap.SetPixel(j, i, color);
         }
 
