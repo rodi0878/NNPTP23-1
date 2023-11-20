@@ -1,19 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Design;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Drawing.Text;
-using System.Linq.Expressions;
-using System.Threading;
 using NNPTPZ1.Mathematics;
-using System.Xml.Serialization;
 
 namespace NNPTPZ1
 {
@@ -31,72 +19,104 @@ namespace NNPTPZ1
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
+        private const int ITERATION_COUNT = 30;
+
         static void Main(string[] args)
         {
             InitializeValues(args);
-            InitializePolynome();
 
+            InitializePolynomes();
+
+            GenerateFractal();
+
+            SaveBitmapFile();
+        }
+
+        private static void GenerateFractal()
+        {
             bitmap = new Bitmap(width, height);
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    ComplexNumber complexNumberIterationPoint = FindCoordinatesOfPixel(i, j);
 
-                    ComplexNumber ox = new ComplexNumber()
-                    {
-                        RealPart = x,
-                        ImaginaryPart = (float)(y)
-                    };
+                    complexNumberIterationPoint = FindSolutionOfEquation(complexNumberIterationPoint);
 
-                    if (ox.RealPart == 0)
-                        ox.RealPart = 0.0001;
-                    if (ox.ImaginaryPart == 0)
-                        ox.ImaginaryPart = 0.0001f;
-                    // find solution of equation using newton's iteration
-                    float it = 0;
-                    for (int q = 0; q < 30; q++)
-                    {
-                        var diff = polynome.Evaluate(ox).Divide(polynomeDerived.Evaluate(ox));
-                        ox = ox.Subtract(diff);
+                    int identificator = FindSolutionRootNumber(complexNumberIterationPoint);
 
-                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
-
-                    // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w < roots.Count; w++)
-                    {
-                        if (Math.Pow(ox.RealPart - roots[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - roots[w].ImaginaryPart, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        roots.Add(ox);
-                        id = roots.Count;
-                    }
-
-                    // colorize pixel according to root number
-                    var vv = colors[id % colors.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    bitmap.SetPixel(j, i, vv);
+                    ColorizePixel(i, j, identificator);
                 }
             }
-            bitmap.Save(fileName ?? "../../../out.png");
-
         }
 
-        private static void InitializePolynome()
+        private static ComplexNumber FindCoordinatesOfPixel(int i, int j)
+        {
+            double y = ymin + i * ystep;
+            double x = xmin + j * xstep;
+
+            ComplexNumber complexNumberIterationPoint = new ComplexNumber()
+            {
+                RealPart = x,
+                ImaginaryPart = y
+            };
+
+            if (complexNumberIterationPoint.RealPart == 0)
+                complexNumberIterationPoint.RealPart = 0.0001;
+            if (complexNumberIterationPoint.ImaginaryPart == 0)
+                complexNumberIterationPoint.ImaginaryPart = 0.0001;
+            return complexNumberIterationPoint;
+        }
+
+        private static ComplexNumber FindSolutionOfEquation(ComplexNumber complexNumber)
+        {
+            for (int i = 0; i < ITERATION_COUNT; i++)
+            {
+                ComplexNumber diff = polynome.Evaluate(complexNumber).Divide(polynomeDerived.Evaluate(complexNumber));
+                complexNumber = complexNumber.Subtract(diff);
+
+                if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
+                {
+                    i--;
+                }
+            }
+            return complexNumber;
+        }
+
+        private static void SaveBitmapFile()
+        {
+            bitmap.Save(fileName ?? "../../../out.png");
+        }
+
+        private static int FindSolutionRootNumber(ComplexNumber complexNumber)
+        {
+            bool known = false;
+            int identificator = 0;
+            for (int i = 0; i < roots.Count; i++)
+            {
+                if (Math.Pow(complexNumber.RealPart - roots[i].RealPart, 2) + 
+                    Math.Pow(complexNumber.ImaginaryPart - roots[i].ImaginaryPart, 2) <= 0.01)
+                {
+                    known = true;
+                    identificator = i;
+                }
+            }
+            if (!known)
+            {
+                roots.Add(complexNumber);
+                identificator = roots.Count;
+            }
+            return identificator;
+        }
+
+        private static void ColorizePixel(int i, int j, int id)
+        {
+            Color color = colors[id % colors.Length];
+            color = Color.FromArgb(color.R, color.G, color.B);
+            bitmap.SetPixel(j, i, color);
+        }
+
+        private static void InitializePolynomes()
         {
             polynome = new Polynome();
             polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
