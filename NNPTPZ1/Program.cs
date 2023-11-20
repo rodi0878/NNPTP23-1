@@ -23,27 +23,19 @@ namespace NNPTPZ1
         private static int width, height;
         private static double xmin, xmax, ymin, ymax, xstep, ystep;
         private static Bitmap bitmap;
-        static List<ComplexNumber> roots;
+        private static List<ComplexNumber> roots;
+        private static Polynome polynome, polynomeDerived;
+
+        private static readonly Color[] colors = new Color[]
+            {
+                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+            };
 
         static void Main(string[] args)
         {
             InitializeValues(args);
-            xstep = (xmax - xmin) / width;
-            ystep = (ymax - ymin) / height;
+            InitializePolynome();
 
-
-            roots = new List<ComplexNumber>();
-            Polynome polynome = new Polynome();
-            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            polynome.Coefficients.Add(ComplexNumber.Zero);
-            polynome.Coefficients.Add(ComplexNumber.Zero);
-            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            Polynome polynomeDerived = polynome.Derive();
-
-            Color[] colors = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
             bitmap = new Bitmap(width, height);
             for (int i = 0; i < width; i++)
             {
@@ -104,6 +96,16 @@ namespace NNPTPZ1
 
         }
 
+        private static void InitializePolynome()
+        {
+            polynome = new Polynome();
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(ComplexNumber.Zero);
+            polynome.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polynomeDerived = polynome.Derive();
+        }
+
         private static void InitializeValues(string[] args)
         {
             width = int.Parse(args[0]);
@@ -113,6 +115,9 @@ namespace NNPTPZ1
             ymin = double.Parse(args[4]);
             ymax = double.Parse(args[5]);
             fileName = args[6];
+            xstep = (xmax - xmin) / width;
+            ystep = (ymax - ymin) / height;
+            roots = new List<ComplexNumber>();
         }
     }
 
