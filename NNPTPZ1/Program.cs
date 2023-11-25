@@ -41,7 +41,7 @@ namespace NNPTPZ1
                 {
                     Complex worldCoordinates = findWorldCoordinatesOfPixel(xmin, ymin, xstep, ystep, i, j);
 
-                    float newtonIteration = findSolutionToNewtonEquation(polynomial, derivedPolynomial, ref worldCoordinates);
+                    int newtonIteration = findSolutionToNewtonEquation(polynomial, derivedPolynomial, ref worldCoordinates);
 
                     int colorIndex = findSolutionRootNumber(roots, worldCoordinates);
 
@@ -70,9 +70,9 @@ namespace NNPTPZ1
             return worldCoordinates;
         }
 
-        private static float findSolutionToNewtonEquation(Polynomial polynomial, Polynomial derivedPolynomial, ref Complex worldCoordinates)
+        private static int findSolutionToNewtonEquation(Polynomial polynomial, Polynomial derivedPolynomial, ref Complex worldCoordinates)
         {
-            float newtonIteration = 0;
+            int newtonIteration = 0;
             for (int i = 0; i < 30; i++)
             {
                 var difference = polynomial.Evaluate(worldCoordinates).Divide(derivedPolynomial.Evaluate(worldCoordinates));
@@ -112,7 +112,6 @@ namespace NNPTPZ1
         private static void colorizePixelByRootNumber(Bitmap image, int i, int j, float newtonIteration, int colorIndex)
         {
             var chosenColor = systemColors[colorIndex % systemColors.Length];
-            chosenColor = Color.FromArgb(chosenColor.R, chosenColor.G, chosenColor.B);
             chosenColor = Color.FromArgb(Math.Min(Math.Max(0, chosenColor.R - (int)newtonIteration * 2), 255), Math.Min(Math.Max(0, chosenColor.G - (int)newtonIteration * 2), 255), Math.Min(Math.Max(0, chosenColor.B - (int)newtonIteration * 2), 255));
             image.SetPixel(j, i, chosenColor);
         }

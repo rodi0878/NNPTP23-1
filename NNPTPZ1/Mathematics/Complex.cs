@@ -15,18 +15,14 @@ namespace NNPTPZ1.Mathematics
         public double RealPart { get; set; }
         public float ImaginaryPart { get; set; }
 
-        public Complex Multiply(Complex multiplicand)
-        {
-            // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
-            return new Complex()
-            {
-                RealPart = this.RealPart * multiplicand.RealPart - this.ImaginaryPart * multiplicand.ImaginaryPart,
-                ImaginaryPart = (float)(this.RealPart * multiplicand.ImaginaryPart + this.ImaginaryPart * multiplicand.RealPart)
-            };
-        }
         public double GetAbsoluteValue()
         {
-            return Math.Sqrt( RealPart * RealPart + ImaginaryPart * ImaginaryPart);
+            return Math.Sqrt(RealPart * RealPart + ImaginaryPart * ImaginaryPart);
+        }
+
+        public double GetAngleInRadians()
+        {
+            return Math.Atan(ImaginaryPart / RealPart);
         }
 
         public Complex Add(Complex addend)
@@ -37,16 +33,23 @@ namespace NNPTPZ1.Mathematics
                 ImaginaryPart = this.ImaginaryPart + addend.ImaginaryPart
             };
         }
-        public double GetAngleInRadians()
-        {
-            return Math.Atan(ImaginaryPart / RealPart);
-        }
+
         public Complex Subtract(Complex subtrahend)
         {
             return new Complex()
             {
                 RealPart = this.RealPart - subtrahend.RealPart,
                 ImaginaryPart = this.ImaginaryPart - subtrahend.ImaginaryPart
+            };
+        }
+
+        public Complex Multiply(Complex multiplicand)
+        {
+            // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
+            return new Complex()
+            {
+                RealPart = this.RealPart * multiplicand.RealPart - this.ImaginaryPart * multiplicand.ImaginaryPart,
+                ImaginaryPart = (float)(this.RealPart * multiplicand.ImaginaryPart + this.ImaginaryPart * multiplicand.RealPart)
             };
         }
 
